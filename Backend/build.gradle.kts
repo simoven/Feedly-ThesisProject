@@ -23,6 +23,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.postgresql:postgresql")
 	implementation("com.googlecode.json-simple:json-simple:1.1.1")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 
 	implementation("org.springframework:spring-test:5.3.20")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

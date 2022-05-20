@@ -9,7 +9,6 @@ class StringValidator {
             if(string.length !in min_len..max_len)
                 throw IllegalStateException("String length not compliant with min/max length")
 
-            println(string)
             if(!string.matches(regex))
                 throw IllegalStateException("String doesn't matches pattern")
         }

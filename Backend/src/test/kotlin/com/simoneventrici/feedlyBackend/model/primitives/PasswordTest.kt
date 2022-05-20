@@ -5,10 +5,6 @@ import org.junit.jupiter.api.Test
 
 internal class PasswordTest {
 
-    fun shouldFailLength() {
-
-    }
-
     @Test
     fun shouldFailRegex() {
         val values = listOf("simone", "Password", "Password123", "password123@", "PASSWORD123@", "Pass??()123")
