@@ -1,6 +1,6 @@
 package com.simoneventrici.feedlyBackend.model.primitives
 
-import com.simoneventrici.feedlyBackend.util.StringValidator
+import com.simoneventrici.feedlyBackend.security.StringValidator
 
 class Username(val value: String) {
     private val MIN_LENGTH = 4
@@ -8,7 +8,7 @@ class Username(val value: String) {
     private val regex = Regex("[A-Za-z0-9_]*")
 
     init {
-        StringValidator.validate(MIN_LENGTH, MAX_LENGTH, regex, value)
+        StringValidator.validate(MIN_LENGTH, MAX_LENGTH, regex, value, "The provided username is not valid")
     }
 
     override fun toString(): String {

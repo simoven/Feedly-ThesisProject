@@ -1,4 +1,4 @@
-package com.simoneventrici.feedlyBackend.persistence.dao
+package com.simoneventrici.feedlyBackend.datasource.dao
 
 import com.simoneventrici.feedlyBackend.model.SoccerTeam
 import org.springframework.beans.factory.annotation.Autowired

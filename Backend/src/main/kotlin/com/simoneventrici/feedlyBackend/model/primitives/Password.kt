@@ -1,6 +1,6 @@
 package com.simoneventrici.feedlyBackend.model.primitives
 
-import com.simoneventrici.feedlyBackend.util.StringValidator
+import com.simoneventrici.feedlyBackend.security.StringValidator
 
 class Password(val value: String, checkValidation: Boolean = true) {
     private val MIN_LENGTH = 6
@@ -9,7 +9,7 @@ class Password(val value: String, checkValidation: Boolean = true) {
 
     init {
         if(checkValidation)
-            StringValidator.validate(MIN_LENGTH, MAX_LENGTH, Regex(pattern), value)
+            StringValidator.validate(MIN_LENGTH, MAX_LENGTH, Regex(pattern), value, "The provided password is not valid")
     }
 
     override fun toString(): String {

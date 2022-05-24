@@ -1,4 +1,4 @@
-package com.simoneventrici.feedlyBackend.model.primitives
+package com.simoneventrici.feedlyBackend.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.sql.ResultSet
@@ -14,7 +14,8 @@ data class News(
     @JsonProperty("source_id") val sourceId: String,
     @JsonProperty("published_date") val publishedDate: String,
     val keyword: String?,
-    val category: Category
+    val category: Category?,
+    var language: String = "en"
 ) {
     private var idEditCount = 0
 
@@ -55,9 +56,10 @@ data class News(
                 imageUrl = rs.getString("image_url"),
                 sourceName = rs.getString("source_name"),
                 sourceId = rs.getString("source_id"),
-                publishedDate = rs.getDate("published_date").toString(),
+                publishedDate = rs.getString("published_date"),
                 keyword = rs.getString("keyword"),
-                category = Category.parse(rs.getString("category"))
+                category = rs.getString("category")?.let { Category.parse(it) },
+                language = rs.getString("language")
             )
         }
     }

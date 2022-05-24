@@ -1,4 +1,4 @@
-package com.simoneventrici.feedlyBackend.persistence.dao
+package com.simoneventrici.feedlyBackend.datasource.dao
 
 interface Dao<T> {
     fun getAll(): List<T>

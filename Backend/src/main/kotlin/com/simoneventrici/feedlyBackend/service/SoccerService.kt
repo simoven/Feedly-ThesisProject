@@ -2,8 +2,8 @@ package com.simoneventrici.feedlyBackend.service
 
 import com.simoneventrici.feedlyBackend.model.SoccerLeague
 import com.simoneventrici.feedlyBackend.model.SoccerTeam
-import com.simoneventrici.feedlyBackend.persistence.dao.SoccerLeagueDao
-import com.simoneventrici.feedlyBackend.persistence.dao.SoccerTeamDao
+import com.simoneventrici.feedlyBackend.datasource.dao.SoccerLeagueDao
+import com.simoneventrici.feedlyBackend.datasource.dao.SoccerTeamDao
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
