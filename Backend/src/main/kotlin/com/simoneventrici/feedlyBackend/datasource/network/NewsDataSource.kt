@@ -1,16 +1,25 @@
 package com.simoneventrici.feedlyBackend.datasource.network
 
-import com.simoneventrici.feedlyBackend.datasource.api.NewsAPi
+import com.simoneventrici.feedlyBackend.datasource.api.NewsAPI
 import com.simoneventrici.feedlyBackend.model.News
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 
 @Repository
 class NewsDataSource(
-    @Autowired private val newsAPi: NewsAPi
+    @Autowired private val newsAPi: NewsAPI
 ) {
 
-    suspend fun getNewsByCategory(category: News.Category, country: String): State<Collection<News>> {
+    private fun countryToLanguage(country: String): String {
+        return when(country) {
+            "it" -> "it"
+            "us" -> "en"
+            "uk" -> "en"
+            else -> "en"
+        }
+    }
+
+    fun getNewsByCategory(category: News.Category, country: String): State<Collection<News>> {
         val response = newsAPi.getNewsByCategory(category, country)
         var articles: Collection<News>? = null
         if (response.body != null)
@@ -20,7 +29,7 @@ class NewsDataSource(
         else State(data = articles)
     }
 
-    suspend fun getNewsByKeyword(keyword: String, language: String, sortBy: String): State<Collection<News>> {
+    fun getNewsByKeyword(keyword: String, language: String, sortBy: String): State<Collection<News>> {
         val response = newsAPi.getNewsByKeyword(keyword, language, sortBy)
         var articles: Collection<News>? = null
         if (response.body != null)

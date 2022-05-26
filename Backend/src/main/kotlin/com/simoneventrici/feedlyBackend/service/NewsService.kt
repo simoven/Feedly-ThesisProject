@@ -1,5 +1,6 @@
 package com.simoneventrici.feedlyBackend.service
 
+import com.simoneventrici.feedlyBackend.datasource.api.NewsAPI
 import com.simoneventrici.feedlyBackend.datasource.dao.NewsDao
 import com.simoneventrici.feedlyBackend.datasource.network.NewsDataSource
 import com.simoneventrici.feedlyBackend.model.News
@@ -14,24 +15,24 @@ class NewsService(
 
     val allKeywords = listOf(
         "elezioni", "sondaggi", "partiti",
-        "ai", "robot", "spazio", "programmazione",
+        "ai", "robot", "spazio", "coding",
         "calcio", "basket", "tennis", "pallavolo",
         "gossip", "spettacolo",
     )
     private val allCategories = listOf(
         Category.Business(),
         Category.General(),
-        Category.Entertainment(),
+        /*Category.Entertainment(),
         Category.Health(),
         Category.Science(),
         Category.Sport(),
-        Category.Technology())
+        Category.Technology()*/)
 
     private val newsByCategory: MutableMap<String, MutableCollection<News>> = mutableMapOf()
     private val newsByKeyword: MutableMap<String, MutableCollection<News>> = mutableMapOf()
 
     init {
-        //Carico tutte le notizie dal database
+        //Carico tutte le notizie dal database e le divido per keyword/categoria
         val allNews = newsDao.getAll()
         allCategories.forEach { category ->
             newsByCategory[category.value] = mutableListOf()
@@ -56,11 +57,22 @@ class NewsService(
         }
     }
 
-    fun getCurrentNewsByCategory(category: Category, language: String): Collection<News> {
-        return newsByCategory[category.value]?.filter { it.language == language } ?: emptyList()
+    suspend fun fetchAllNewsByKeyword() {
+        allKeywords.forEach { keyword ->
+            val itNews = newsDataSource.getNewsByKeyword(keyword, "it", NewsAPI.SORT_RELEVANCY)
+            newsByKeyword[keyword]?.addAll(itNews.data ?: emptyList())
+            newsByKeyword[keyword]?.distinctBy { it.newsUrl }
+            itNews.data?.forEach { newsDao.save(it) }
+        }
     }
 
+    // restrituisco le notizie già fetchate in precedenza
+    fun getCurrentNewsByCategory(category: Category, language: String): Collection<News> {
+        return newsByCategory[category.value]?.filter { it.language == language }?.sortedBy { it.publishedDate }?.reversed() ?: emptyList()
+    }
+
+    // le notizie per keyword sono solo in italiano
     fun getCurrentNewsByKeyword(keyword: String): Collection<News> {
-        return newsByKeyword[keyword] ?: emptyList()
+        return newsByKeyword[keyword]?.sortedBy { it.publishedDate }?.reversed() ?: emptyList()
     }
 }

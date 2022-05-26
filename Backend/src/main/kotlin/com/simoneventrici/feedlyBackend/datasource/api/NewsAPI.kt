@@ -10,15 +10,17 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
 
 @Component
-class NewsAPi(
+class NewsAPI(
     @Autowired private val restTemplate: RestTemplate,
     @Autowired private val appProperties: Properties
 ) {
     private val BASE_URL = "https://newsapi.org/v2/"
 
-    val SORT_POPULARITY = "popularity"
-    val SORT_RELEVANCY = "relevancy"
-    val SORT_NEWEST = "publishedAt"
+    companion object {
+        val SORT_POPULARITY = "popularity"
+        val SORT_RELEVANCY = "relevancy"
+        val SORT_NEWEST = "publishedAt"
+    }
 
     private fun getUrl(path: String, category: String? = null, country: String? = null, language: String? = null, keyword: String? = null, sortBy: String? = null): String {
         val keywordPath = if(keyword != null) "&q=$keyword" else ""
