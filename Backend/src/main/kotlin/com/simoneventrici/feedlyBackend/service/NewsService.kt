@@ -2,9 +2,13 @@ package com.simoneventrici.feedlyBackend.service
 
 import com.simoneventrici.feedlyBackend.datasource.api.NewsAPI
 import com.simoneventrici.feedlyBackend.datasource.dao.NewsDao
+import com.simoneventrici.feedlyBackend.datasource.dto.news.NewsAndReactionsDto
+import com.simoneventrici.feedlyBackend.datasource.dto.news.ReactionsDto
 import com.simoneventrici.feedlyBackend.datasource.network.NewsDataSource
 import com.simoneventrici.feedlyBackend.model.News
 import com.simoneventrici.feedlyBackend.model.News.Category
+import com.simoneventrici.feedlyBackend.model.User
+import com.simoneventrici.feedlyBackend.model.primitives.Emoji
 import org.springframework.stereotype.Service
 
 @Service
@@ -66,13 +70,26 @@ class NewsService(
         }
     }
 
-    // restrituisco le notizie già fetchate in precedenza
-    fun getCurrentNewsByCategory(category: Category, language: String): Collection<News> {
-        return newsByCategory[category.value]?.filter { it.language == language }?.sortedBy { it.publishedDate }?.reversed() ?: emptyList()
+    // restituisco le notizie già fetchate in precedenza
+    fun getAllCurrentNewsByCategory(category: Category, language: String, user: User): Collection<NewsAndReactionsDto> {
+        return newsByCategory[category.value]
+            ?.filter { it.language == language }
+            ?.sortedBy { it.publishedDate }
+            ?.reversed()
+            ?.map {
+                // mappo ogni notizia all'oggetto che la contiene insieme alle reazioni
+                val reactions = newsDao.getNewsReactions(it.getId(), user)
+                NewsAndReactionsDto(news = it, reactions = reactions.newsReactions, userReaction = reactions.userReaction)
+            } ?: emptyList()
     }
 
     // le notizie per keyword sono solo in italiano
-    fun getCurrentNewsByKeyword(keyword: String): Collection<News> {
+    fun getAllCurrentNewsByKeyword(keyword: String): Collection<News> {
         return newsByKeyword[keyword]?.sortedBy { it.publishedDate }?.reversed() ?: emptyList()
+    }
+
+    fun addReactionToNews(newsId: Int, user: User, emoji: Emoji): ReactionsDto {
+        newsDao.addReactionToNews(newsId, user.getUsername(), emoji.unicode_str)
+        return newsDao.getNewsReactions(newsId, user)
     }
 }

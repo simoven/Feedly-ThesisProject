@@ -19,6 +19,7 @@ class ScheduledService(
             println(Thread.currentThread().name)
         }
     }
+
     suspend fun checkAndFetchNews() {
         while(coroutineContext.isActive) {
             println("Fetching")
