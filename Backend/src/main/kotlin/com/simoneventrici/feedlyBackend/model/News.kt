@@ -28,6 +28,10 @@ data class News(
         class Sport: Category("sport")
         class Technology: Category("technology")
 
+        override fun toString(): String {
+            return value
+        }
+
         companion object {
             fun parse(str: String): Category {
                 return when(str) {

@@ -1,6 +1,5 @@
 package com.simoneventrici.feedlyBackend.datasource.dao
 
-import com.simoneventrici.feedlyBackend.datasource.dto.news.NewsAndReactionsDto
 import com.simoneventrici.feedlyBackend.datasource.dto.news.ReactionsDto
 import com.simoneventrici.feedlyBackend.model.News
 import com.simoneventrici.feedlyBackend.model.User
@@ -20,6 +19,7 @@ class NewsDao(
     private val removeQuery = "delete from news where id=?"
     private val allNewsReactionsQuery = "select * from user_react_news where news=?"
     private val addReactionQuery = "insert into user_react_news values(?, ?, ?) on conflict (\"user\", news) do update set reaction = EXCLUDED.reaction"
+    private val removeOldNewsQuery = "select remove_old_news()"
 
     override fun getAll(): List<News> {
         val news = mutableListOf<News>()
@@ -48,7 +48,7 @@ class NewsDao(
         // se la news è già presente nel db, prendo il suo id, altrimenti prendo l'id dell'ultima news inserita
         val creator = PreparedStatementCreator { it.prepareStatement("select id from news where news_url=?")}
         val setter = PreparedStatementSetter { it.setString(1, elem.newsUrl) }
-        val query = jdbcTemplate.query(creator, setter) {
+        jdbcTemplate.query(creator, setter) {
             if(it.next()) id = it.getInt((1))
             it.close()
         }
@@ -57,6 +57,7 @@ class NewsDao(
                 id = it.getInt(1)
             }
         }
+        // imposto l'id fornitor dal db
         elem.setId(id)
     }
 
@@ -94,5 +95,10 @@ class NewsDao(
             it.setString(3, emoji)
             it.execute()
         }
+    }
+
+    fun removeOldNews() {
+        // chiama la funzione del db che rimuove le notizie inserite oltre 7 giorni fa
+        jdbcTemplate.execute(removeOldNewsQuery)
     }
 }

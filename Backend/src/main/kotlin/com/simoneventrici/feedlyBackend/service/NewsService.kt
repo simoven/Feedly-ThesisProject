@@ -17,6 +17,9 @@ class NewsService(
     private val newsDao: NewsDao
 ) {
 
+    // ogni fetch delle notizie richiede 7*2 + 13 = 27 API calls
+    // limite giornaliero attuale = 100
+
     val allKeywords = listOf(
         "elezioni", "sondaggi", "partiti",
         "ai", "robot", "spazio", "coding",
@@ -91,5 +94,9 @@ class NewsService(
     fun addReactionToNews(newsId: Int, user: User, emoji: Emoji): ReactionsDto {
         newsDao.addReactionToNews(newsId, user.getUsername(), emoji.unicode_str)
         return newsDao.getNewsReactions(newsId, user)
+    }
+
+    fun removeOldNews() {
+        newsDao.removeOldNews()
     }
 }
