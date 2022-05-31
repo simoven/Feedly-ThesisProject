@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.simoneventrici.feedly.model.News
 import com.simoneventrici.feedly.presentation.components.EmojiOverviewBar
-import com.simoneventrici.feedly.ui.theme.WHiteDark2
 import com.simoneventrici.feedly.ui.theme.WhiteDark1
+import com.simoneventrici.feedly.ui.theme.WhiteDark2
 
 @Composable
 fun NewsCard(
@@ -97,7 +97,7 @@ fun NewsCard(
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = news.publishedDate.split("T")[0],
-                    color = WHiteDark2,
+                    color = WhiteDark2,
                     fontSize = 16.sp
                 )
             }

@@ -24,7 +24,7 @@ fun EmojiOverviewBar(
 ) {
     Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(15.dp))
+            .clip(RoundedCornerShape(18.dp))
             .background(LighterGray)
             .padding(vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -33,9 +33,10 @@ fun EmojiOverviewBar(
         for((key, value) in emojis) {
             val emoji = Emoji.Loader.load(key)
 
+            // Il box che contiene le varie emoji
             Box(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(15.dp))
                     .background(if (selectedEmoji?.equals(key) == true) MainGreen else Color.Transparent)
                     .padding(horizontal = 4.dp, vertical = 1.dp)
             ) {
@@ -56,7 +57,7 @@ fun EmojiOverviewBar(
                     Spacer(modifier = Modifier.width(4.dp))
                 }
             }
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(6.dp))
         }
     }
 }

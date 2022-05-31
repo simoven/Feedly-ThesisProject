@@ -1,5 +1,7 @@
 package com.simoneventrici.feedly.model.primitives
 
+import com.simoneventrici.feedly.model.News
+
 sealed class NewsCategory(val value: String) {
     class Business: NewsCategory("business")
     class General: NewsCategory("general")
@@ -21,6 +23,10 @@ sealed class NewsCategory(val value: String) {
                 "technology" -> Technology()
                 else -> throw IllegalStateException("Invalid category")
             }
+        }
+
+        fun getAll() : List<NewsCategory> {
+            return listOf(General(), Entertainment(), Business(), Health(), Science(), Sport(), Technology())
         }
     }
 

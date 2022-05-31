@@ -29,11 +29,11 @@ class NewsService(
     private val allCategories = listOf(
         Category.Business(),
         Category.General(),
-        /*Category.Entertainment(),
+        Category.Entertainment(),
         Category.Health(),
         Category.Science(),
         Category.Sport(),
-        Category.Technology()*/)
+        Category.Technology())
 
     private val newsByCategory: MutableMap<String, MutableCollection<News>> = mutableMapOf()
     private val newsByKeyword: MutableMap<String, MutableCollection<News>> = mutableMapOf()

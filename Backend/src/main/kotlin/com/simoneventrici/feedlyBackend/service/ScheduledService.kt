@@ -13,10 +13,10 @@ class ScheduledService(
 
     // fetcho le news ogni 8 ore
     val INTERVAL_FETCHING_NEWS: Long = 1000 * 60 * 60 * 8
-    // rimuovo le notizie vecchie ogni 25 ore
+    // controllo le notizie vecchie ogni 25 ore
     val INTERVAL_REMOVE_NEWS: Long = 1000 * 60 * 60 * 25
 
-    val dateFormat = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
+    val dateFormat = SimpleDateFormat("yyyy/MM/DD hh:mm:ss")
 
     init {
         GlobalScope.launch(Dispatchers.IO) {

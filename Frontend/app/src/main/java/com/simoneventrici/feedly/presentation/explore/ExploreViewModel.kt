@@ -1,6 +1,8 @@
 package com.simoneventrici.feedly.presentation.explore
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.simoneventrici.feedly.commons.Constants
@@ -19,8 +21,14 @@ class ExploreViewModel @Inject constructor(
     private val newsRepository: NewsRepository
 ): ViewModel() {
 
-    val currentNewsByCategory = mutableStateOf<DataState<List<NewsAndReactions>>>(DataState.None())
+    // contengono tutti i dati relativi alle ntozie, se sono stati fetchati, se ci sono stati errori ecc
+    val currentNewsByCategory = mutableStateOf<Map<String, DataState<List<NewsAndReactions>>>>(emptyMap())
     val currentNewsByKeyword = mutableStateOf<DataState<List<News>>>(DataState.None())
+
+    private var lastScrollIndex = 0
+    private val _scrollUp = MutableLiveData(false)
+    val scrollUp: LiveData<Boolean>
+        get() = _scrollUp
 
     init {
         getNewsByCategory(Constants.TEST_TOKEN, NewsCategory.Business(), "en")
@@ -32,7 +40,9 @@ class ExploreViewModel @Inject constructor(
             category = category,
             language = language
         ).onEach {
-            currentNewsByCategory.value = it
+            val currentMap = currentNewsByCategory.value.toMutableMap()
+            currentMap[category.value] = it
+            currentNewsByCategory.value = currentMap
         }.launchIn(viewModelScope)
     }
 
@@ -42,5 +52,12 @@ class ExploreViewModel @Inject constructor(
         ).onEach {
             currentNewsByKeyword.value = it
         }.launchIn(viewModelScope)
+    }
+
+    fun updateScrollPosition(newScrollIndex: Int) {
+        if (newScrollIndex == lastScrollIndex) return
+
+        _scrollUp.value = newScrollIndex > lastScrollIndex
+        lastScrollIndex = newScrollIndex
     }
 }

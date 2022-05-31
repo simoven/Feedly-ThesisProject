@@ -22,13 +22,14 @@ class NewsAPI(
         val SORT_NEWEST = "publishedAt"
     }
 
-    private fun getUrl(path: String, category: String? = null, country: String? = null, language: String? = null, keyword: String? = null, sortBy: String? = null): String {
+    private fun getUrl(path: String, category: String? = null, country: String? = null, language: String? = null,
+                       keyword: String? = null, sortBy: String? = null, pageSize: String = "20"): String {
         val keywordPath = if(keyword != null) "&q=$keyword" else ""
         val sortByPath = if(sortBy != null) "&sortBy=$sortBy" else ""
         val categoryPath = if(category != null) "&category=$category" else ""
         val countryPath = if(country != null) "&country=$country" else ""
         val languagePath = if(language != null) "&language=$language" else ""
-        return "$BASE_URL/$path?pageSize=25&apiKey=${appProperties.newsApiKey}$categoryPath$keywordPath$sortByPath$countryPath$languagePath"
+        return "$BASE_URL/$path?pageSize=$pageSize&apiKey=${appProperties.newsApiKey}$categoryPath$keywordPath$sortByPath$countryPath$languagePath"
     }
 
     fun getNewsByCategory(category: News.Category, country: String): ResponseEntity<NewsListDto> {
@@ -47,7 +48,8 @@ class NewsAPI(
                 path = "everything",
                 keyword = keyword,
                 language = language,
-                sortBy = sortBy
+                sortBy = sortBy,
+                pageSize = "15"
             )
         )
     }

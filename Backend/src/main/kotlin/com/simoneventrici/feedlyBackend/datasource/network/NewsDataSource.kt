@@ -23,7 +23,7 @@ class NewsDataSource(
         val response = newsAPi.getNewsByCategory(category, country)
         var articles: Collection<News>? = null
         if (response.body != null)
-            articles = response.body?.articles?.map { it.toNews(category.value, null) }?.onEach { it.language = country }
+            articles = response.body?.articles?.map { it.toNews(category.value, null) }?.onEach { it.language = countryToLanguage(country) }
 
         return if (articles == null) State(errorMsg = "Error while fetching news (${response.statusCode})", data = null)
         else State(data = articles)
