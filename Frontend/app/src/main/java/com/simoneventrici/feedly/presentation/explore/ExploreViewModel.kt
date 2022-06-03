@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.simoneventrici.feedly.commons.Constants
 import com.simoneventrici.feedly.commons.DataState
+import com.simoneventrici.feedly.model.Emoji
 import com.simoneventrici.feedly.model.News
 import com.simoneventrici.feedly.model.NewsAndReactions
 import com.simoneventrici.feedly.model.primitives.NewsCategory
@@ -24,6 +25,11 @@ class ExploreViewModel @Inject constructor(
     // contengono tutti i dati relativi alle ntozie, se sono stati fetchati, se ci sono stati errori ecc
     val currentNewsByCategory = mutableStateOf<Map<String, DataState<List<NewsAndReactions>>>>(emptyMap())
     val currentNewsByKeyword = mutableStateOf<DataState<List<News>>>(DataState.None())
+
+    // questa mappa contiene, per ogni categoria di notizie, l'ultima notizia per cui è servito un aggiornamento
+    // delle reaction in seguito all'inserimento da parte dell'utente di una reaction
+    // serve per fare la ricomposizione delle pagine
+    val latestNewsIdReactionAddedByCategory = mutableStateOf<Map <String, Pair<Int, String>>>(emptyMap())
 
     private var lastScrollIndex = 0
     private val _scrollUp = MutableLiveData(false)
@@ -51,6 +57,31 @@ class ExploreViewModel @Inject constructor(
             keyword = keyword
         ).onEach {
             currentNewsByKeyword.value = it
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getNewsInMap(newsId: Int, category: String): NewsAndReactions? {
+        return currentNewsByCategory.value[category]?.data?.firstOrNull() {
+            it.news.id == newsId
+        }
+    }
+
+    fun addReactionToNews(category: String, newsId: Int, emoji: Emoji, authToken: String ) {
+        newsRepository.addReactionToNews(newsId = newsId, emojiCode = emoji.unicode_str, authToken = authToken).onEach { state ->
+            if(state is DataState.Success) {
+                val news = getNewsInMap(newsId, category)
+                news?.let {
+                    it.userReaction = state.data?.userReaction ?: ""
+                    it.reactions = state.data?.newReactions ?: it.reactions
+                }
+                val currentMap = latestNewsIdReactionAddedByCategory.value.toMutableMap()
+                currentMap[category] = Pair(newsId, emoji.unicode_str)
+                latestNewsIdReactionAddedByCategory.value = currentMap
+            }
+            else {
+                // TODO
+                println("ERRORE NEWS REAZIONE")
+            }
         }.launchIn(viewModelScope)
     }
 

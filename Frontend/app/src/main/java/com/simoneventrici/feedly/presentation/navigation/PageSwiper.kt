@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.pager.*
+import com.simoneventrici.feedly.presentation.explore.PageState
 import com.simoneventrici.feedly.ui.theme.*
 import kotlinx.coroutines.launch
 
@@ -24,7 +25,7 @@ fun PageSwiper(
     pagerState: PagerState,
     tabList: List<String>,
     padding: PaddingValues,
-    allPages: Map<String, @Composable () -> Unit>,
+    allPages: Map<String, PageState>,
     scrollUpState: State<Boolean?>
 ) {
     val coroutineScreen = rememberCoroutineScope()
@@ -46,6 +47,7 @@ fun PageSwiper(
                 .background(Color.Transparent)
                 .padding(horizontal = 10.dp),
             edgePadding = 0.dp,
+            // nascondo gli indicator di default
             indicator = { tabPositions ->
                 TabRowDefaults.Indicator(
                     Modifier
@@ -97,7 +99,7 @@ fun PageSwiper(
                 .fillMaxSize()
                 .background(Color.Transparent)
         ) {
-            allPages[tabList[it].replaceFirstChar { ch -> ch.lowercase() }]?.invoke() ?: {}.invoke()
+            allPages[tabList[it].replaceFirstChar { ch -> ch.lowercase() }]?.content?.invoke()
         }
     }
 }

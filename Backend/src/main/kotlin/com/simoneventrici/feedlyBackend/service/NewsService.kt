@@ -20,6 +20,10 @@ class NewsService(
     // ogni fetch delle notizie richiede 7*2 + 13 = 27 API calls
     // limite giornaliero attuale = 100
 
+    // le notizie per categoria vengono fetchate e salvate nel database
+    // quelle per keyword no, vengono caricate all'avvio del backend e tenute in memoria
+    // vengono poi aggiornate ogni tot ore insieme a quelle per categoria
+
     val allKeywords = listOf(
         "elezioni", "sondaggi", "partiti",
         "ai", "robot", "spazio", "coding",
@@ -39,15 +43,11 @@ class NewsService(
     private val newsByKeyword: MutableMap<String, MutableCollection<News>> = mutableMapOf()
 
     init {
-        //Carico tutte le notizie dal database e le divido per keyword/categoria
+        //Carico tutte le notizie dal database e le divido per categoria
         val allNews = newsDao.getAll()
         allCategories.forEach { category ->
             newsByCategory[category.value] = mutableListOf()
             newsByCategory[category.value]?.addAll(allNews.filter { news -> (news.category?.javaClass == category.javaClass) })
-        }
-        allKeywords.forEach { keyword ->
-            newsByKeyword[keyword] = mutableListOf()
-            newsByKeyword[keyword]?.addAll(allNews.filter { news -> news.keyword?.equals(keyword) ?: false })
         }
     }
 
@@ -69,7 +69,6 @@ class NewsService(
             val itNews = newsDataSource.getNewsByKeyword(keyword, "it", NewsAPI.SORT_RELEVANCY)
             newsByKeyword[keyword]?.addAll(itNews.data ?: emptyList())
             newsByKeyword[keyword]?.distinctBy { it.newsUrl }
-            itNews.data?.forEach { newsDao.save(it) }
         }
     }
 

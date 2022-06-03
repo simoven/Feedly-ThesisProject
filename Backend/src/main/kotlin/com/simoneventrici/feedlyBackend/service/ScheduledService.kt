@@ -16,11 +16,11 @@ class ScheduledService(
     // controllo le notizie vecchie ogni 25 ore
     val INTERVAL_REMOVE_NEWS: Long = 1000 * 60 * 60 * 25
 
-    val dateFormat = SimpleDateFormat("yyyy/MM/DD hh:mm:ss")
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 
     init {
         GlobalScope.launch(Dispatchers.IO) {
-            //checkAndFetchNews()
+            checkAndFetchNews()
         }
 
         GlobalScope.launch(Dispatchers.Default) {
@@ -29,16 +29,16 @@ class ScheduledService(
     }
 
     suspend fun checkAndFetchNews() {
-        delay(6000)
+        delay(4000)
         while(coroutineContext.isActive) {
             kotlin.runCatching {
-                println("${dateFormat.format(Date())} REQUESTING Fetch News by category")
-                newsService.fetchAllNewsByCategory()
-                println("${dateFormat.format(Date())} FETCHED News by category")
-
                 println("${dateFormat.format(Date())} REQUESTING Fetch News by keyword")
                 newsService.fetchAllNewsByKeyword()
                 println("${dateFormat.format(Date())} FETCHED News by keyword")
+
+                /*println("${dateFormat.format(Date())} REQUESTING Fetch News by category")
+                newsService.fetchAllNewsByCategory()
+                println("${dateFormat.format(Date())} FETCHED News by category")*/
             }.onFailure {
                 println("${it::class} : ${it.message}")
             }

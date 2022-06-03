@@ -38,6 +38,7 @@ class NewsAPI(
                 path = "top-headlines",
                 category = category.value,
                 country = country,
+                pageSize = "25"
             )
         )
     }
@@ -49,7 +50,7 @@ class NewsAPI(
                 keyword = keyword,
                 language = language,
                 sortBy = sortBy,
-                pageSize = "15"
+                pageSize = "30"
             )
         )
     }

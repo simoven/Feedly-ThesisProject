@@ -15,10 +15,10 @@ class NewsDao(
 ): Dao<News> {
 
     private val getAllQuery = "select * from news"
-    private val saveQuery = "insert into news values(default,?,?,?,?,?,?,?,?,?,?,now(),?) on conflict do nothing "
+    private val saveQuery = "insert into news values(default,?,?,?,?,?,?,?,?,?,now(),?) on conflict do nothing "
     private val removeQuery = "delete from news where id=?"
     private val allNewsReactionsQuery = "select * from user_react_news where news=?"
-    private val addReactionQuery = "insert into user_react_news values(?, ?, ?) on conflict (\"user\", news) do update set reaction = EXCLUDED.reaction"
+    private val addReactionQuery = "select add_reaction_news(?, ?, ?)"
     private val removeOldNewsQuery = "select remove_old_news()"
 
     override fun getAll(): List<News> {
@@ -39,10 +39,9 @@ class NewsDao(
             it.setString(5, elem.imageUrl)
             it.setString(6, elem.sourceName)
             it.setString(7, elem.sourceId)
-            it.setString(8, elem.keyword)
-            it.setString(9, elem.category?.value)
-            it.setString(10, elem.publishedDate)
-            it.setString(11, elem.language)
+            it.setString(8, elem.category?.value)
+            it.setString(9, elem.publishedDate)
+            it.setString(10, elem.language)
             it.execute()
         }
         // se la news è già presente nel db, prendo il suo id, altrimenti prendo l'id dell'ultima news inserita
@@ -57,7 +56,7 @@ class NewsDao(
                 id = it.getInt(1)
             }
         }
-        // imposto l'id fornitor dal db
+        // imposto l'id fornito dal db
         elem.setId(id)
     }
 
@@ -88,6 +87,8 @@ class NewsDao(
     }
 
     // la insert lancia un'eccezione se non esiste il newsId. L'eccezione viene catturata poi nel controller
+    // se la stessa reazione esiste già, viene rimossa
+    // se esiste già una combinazione username, newsId ma con reazione diversa, viene aggiornata
     fun addReactionToNews(newsId: Int, username: String, emoji: String) {
         jdbcTemplate.execute(addReactionQuery) {
             it.setString(1, username)

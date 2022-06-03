@@ -77,7 +77,7 @@ class NewsController(
         return JSONObject().apply {
             put("news_id", newsId)
             put("news_reactions", allReactions.newsReactions)
-            put("user_reactions", allReactions.userReaction)
+            put("user_reactions", allReactions.userReaction ?: "")
         }
     }
 

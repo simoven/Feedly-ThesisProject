@@ -13,7 +13,7 @@ data class News(
     @JsonProperty("source_name") val sourceName: String,
     @JsonProperty("source_id") val sourceId: String,
     @JsonProperty("published_date") val publishedDate: String,
-    val keyword: String?,
+    val keyword: String? = null,
     val category: Category?,
     var language: String = "en"
 ) {
@@ -61,7 +61,6 @@ data class News(
                 sourceName = rs.getString("source_name"),
                 sourceId = rs.getString("source_id"),
                 publishedDate = rs.getString("published_date"),
-                keyword = rs.getString("keyword"),
                 category = rs.getString("category")?.let { Category.parse(it) },
                 language = rs.getString("language")
             )

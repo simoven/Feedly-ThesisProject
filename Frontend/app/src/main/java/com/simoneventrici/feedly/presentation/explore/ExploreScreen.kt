@@ -1,23 +1,26 @@
 package com.simoneventrici.feedly.presentation.explore
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,14 +30,29 @@ import com.simoneventrici.feedly.commons.Constants
 import com.simoneventrici.feedly.commons.DataState
 import com.simoneventrici.feedly.commons.getSystemStatusbarHeightInDp
 import com.simoneventrici.feedly.model.primitives.NewsCategory
+import com.simoneventrici.feedly.presentation.components.shimmerEffectLoader
 import com.simoneventrici.feedly.presentation.explore.components.NewsCard
+import com.simoneventrici.feedly.presentation.explore.components.NewsLoader
 import com.simoneventrici.feedly.presentation.explore.components.ScrollableTopBar
 import com.simoneventrici.feedly.presentation.navigation.PageSwiper
 import com.simoneventrici.feedly.ui.theme.DarkGreen
-import com.simoneventrici.feedly.ui.theme.DarkGreen2
 import com.simoneventrici.feedly.ui.theme.LighterBlack
-import com.simoneventrici.feedly.ui.theme.MainGreen
+import com.simoneventrici.feedly.ui.theme.WhiteDark1
+import com.simoneventrici.feedly.R
+import com.simoneventrici.feedly.model.Emoji
 
+// questa classe contiene la pagina da dare allo swiper per ogni categoria di notizia
+// la uso per evitare di ricomporre ogni volta la stessa pagina, controllando se lo stato era già success
+data class PageState(
+    val content: @Composable () -> Unit,
+    val state: LoadingState
+) {
+    sealed class LoadingState {
+        object Success : LoadingState()
+        object Loading : LoadingState()
+        object Error : LoadingState()
+    }
+}
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -42,58 +60,144 @@ fun ExploreScreen(
     newsViewModel: ExploreViewModel = hiltViewModel()
 ) {
     val newsByCategoryState = newsViewModel.currentNewsByCategory
-    val newsByKeywordState = newsViewModel.currentNewsByKeyword
+    //val newsByKeywordState = newsViewModel.currentNewsByKeyword
 
     val pagerState = rememberPagerState()
     val allCategory = NewsCategory.getAll()
     val currentCategory = allCategory[pagerState.currentPage]
     val scrollUpState = newsViewModel.scrollUp.observeAsState()
 
-    val pagesMap = remember { mutableMapOf<String, @Composable () -> Unit>() }
+    val pagesMap = remember { mutableMapOf<String, PageState>() }
+
+    // unico scrollState per tutte le pagine di caricamento
+    val loadingPagesColumnScrollState = rememberScrollState()
 
     // se non ho le notizie di questa categoria, le fetcho
     if(newsByCategoryState.value[currentCategory.value] == null)
         newsViewModel.getNewsByCategory(Constants.TEST_TOKEN, currentCategory, "en")
 
     // fetcho le notizie della categoria immediatamente successiva, per avere una transizione pulita nello swiper
-    if(pagerState.currentPage < allCategory.size - 1) {
-        if(newsByCategoryState.value[allCategory[pagerState.currentPage + 1].value] == null)
+    // se non è stato già richiesto il fetch per quella categoria9
+    allCategory.getOrNull(pagerState.currentPage + 1)?.run {
+        if(newsByCategoryState.value[this.value] == null) {
             newsViewModel.getNewsByCategory(Constants.TEST_TOKEN, allCategory[pagerState.currentPage + 1], "en")
+        }
     }
 
-    // ogni volta che viene fetchata con successo una nuova categoria di notizie, creo le varie pagine e le inserisco in una mappa
-    LaunchedEffect(key1 = newsByCategoryState.value.values.filter { it is DataState.Success }.size) {
-        println("Cambiati i valori della mappa")
-        newsByCategoryState.value.keys.forEach { key ->
-            val state = newsByCategoryState.value[key]
-            val page = @Composable {
-                val columnScrollState = rememberLazyListState()
-                newsViewModel.updateScrollPosition(columnScrollState.firstVisibleItemIndex)
+    // ogni volta che aumentano o diminuiscono le categorie in caricamento, creo le varie pagine e le inserisco in una mappa
+    LaunchedEffect(key1 = newsByCategoryState.value.values.filter { it is DataState.Loading }.size) {
+        // per ogni categoria, prendo il relativo oggetto stato
+        newsByCategoryState.value.keys.forEach { categoryStr ->
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Transparent),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    state = columnScrollState
-                ) {
-                    items(items = state?.data ?: emptyList()) { news ->
-                        Spacer(modifier = Modifier.height(25.dp))
-                        NewsCard(
-                            news = news.news,
-                            reactions = news.reactions,
-                            userReaction = news.userReaction
-                        )
-                        Divider(
+            // se la categoria è stata fetchata con successo, mostro la relativa pagina
+            when(val state = newsByCategoryState.value[categoryStr]) {
+                is DataState.Success -> {
+                    // se la pagina è già stata renderizzata, evito di farlo di nuovo
+                    if(pagesMap[categoryStr]?.state is PageState.LoadingState.Success) return@forEach
+
+                    val page = @Composable {
+                        val idxEmojiBarOpen =  remember { mutableStateOf(-1) }
+                        val columnScrollState = rememberLazyListState()
+
+                        // serve solo per fare in modo che, se le reazioni cambiano, viene ricomposta la pagina
+                        val latestNewsIdEmojiChanged = newsViewModel.latestNewsIdReactionAddedByCategory.value[categoryStr]
+
+                        newsViewModel.updateScrollPosition(columnScrollState.firstVisibleItemIndex)
+
+                        LazyColumn(
                             modifier = Modifier
-                                .fillMaxWidth(.9f)
-                                .height(1.dp),
-                            color = Color.DarkGray
-                        )
+                                .fillMaxSize()
+                                .background(Color.Transparent)
+                                .pointerInput(Unit) {
+                                    detectTapGestures(
+                                        onTap = { idxEmojiBarOpen.value = -1}
+                                    )
+                                },
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            state = columnScrollState
+                        ) {
+                            itemsIndexed(items = state.data ?: emptyList()) { idx, news ->
+                                val openEmojiBar = { idxEmojiBarOpen.value = idx }
+                                // funzione chiamata quando clicco un'emoji per aggiungere reazioni
+                                val onEmojiClicked = { emoji: Emoji ->
+                                    newsViewModel.addReactionToNews(
+                                        category = categoryStr,
+                                        authToken = Constants.TEST_TOKEN,
+                                        newsId = news.news.id,
+                                        emoji = emoji
+                                    )
+                                    idxEmojiBarOpen.value = -1
+                                }
+
+                                Spacer(modifier = Modifier.height(25.dp))
+                                NewsCard(
+                                    news = news.news,
+                                    reactions = news.reactions,
+                                    userReaction = news.userReaction,
+                                    onLongClick = openEmojiBar,
+                                    onEmojiClicked = onEmojiClicked,
+                                    emojiBoxActive = idx == idxEmojiBarOpen.value
+                                )
+                                Divider(
+                                    modifier = Modifier
+                                        .fillMaxWidth(.9f)
+                                        .height(1.dp),
+                                    color = Color.DarkGray
+                                )
+                            }
+                        }
                     }
+                    pagesMap[categoryStr] = PageState(
+                        content = page,
+                        state = PageState.LoadingState.Success
+                    )
                 }
+
+                // pagina di errore
+                is DataState.Error -> {
+                    pagesMap[categoryStr] = PageState(
+                        content = @Composable {
+                            Box(
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 20.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = state.errorMsg ?: LocalContext.current.getString(R.string.unexpected_error_msg),
+                                    color = WhiteDark1,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        },
+                        state = PageState.LoadingState.Error
+                    )
+                }
+
+                // pagina di caricamento con shimmer effect
+                is DataState.Loading -> {
+                    pagesMap[categoryStr] = PageState(
+                        content = @Composable {
+                            shimmerEffectLoader { brush ->
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(Color.Transparent)
+                                        .verticalScroll(loadingPagesColumnScrollState),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    repeat(3) {
+                                        NewsLoader(brush = brush)
+                                    }
+                                }
+                            }.invoke()
+                        },
+                        state = PageState.LoadingState.Loading
+                    )
+                }
+                else -> {}
             }
-            pagesMap[key] = page
         }
     }
 

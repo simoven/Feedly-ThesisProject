@@ -23,7 +23,10 @@ class NewsDataSource(
         val response = newsAPi.getNewsByCategory(category, country)
         var articles: Collection<News>? = null
         if (response.body != null)
-            articles = response.body?.articles?.map { it.toNews(category.value, null) }?.onEach { it.language = countryToLanguage(country) }
+            articles = response.body?.articles
+                ?.filter { it.urlToImage != null }
+                ?.map { it.toNews(category.value, null) }
+                ?.onEach { it.language = countryToLanguage(country) }
 
         return if (articles == null) State(errorMsg = "Error while fetching news (${response.statusCode})", data = null)
         else State(data = articles)
@@ -32,8 +35,12 @@ class NewsDataSource(
     fun getNewsByKeyword(keyword: String, language: String, sortBy: String): State<Collection<News>> {
         val response = newsAPi.getNewsByKeyword(keyword, language, sortBy)
         var articles: Collection<News>? = null
+        // rimuovo tutte le notizie che non hanno una immagine
         if (response.body != null)
-            articles = response.body?.articles?.map { it.toNews(null, keyword) }?.onEach { it.language = language }
+            articles = response.body?.articles
+                ?.filter { it.urlToImage != null }
+                ?.map { it.toNews(null, keyword) }
+                ?.onEach { it.language = language }
 
         return if (articles == null) State(errorMsg = "Error while fetching news (${response.statusCode})", data = null)
         else State(data = articles)
