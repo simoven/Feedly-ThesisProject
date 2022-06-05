@@ -21,7 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.simoneventrici.feedly.R
+import com.simoneventrici.feedly.presentation.navigation.Screen
 import com.simoneventrici.feedly.ui.theme.WhiteColor
 
 data class ContentHolder(
@@ -80,11 +82,12 @@ fun ContentCard(
 
 @Composable
 fun TopicChooser(
+    navController: NavController,
     content: List<ContentHolder> = listOf(
         ContentHolder(R.drawable.weather_background, "Weather", {}),
         ContentHolder(R.drawable.soccer_background, "Soccer", {}),
         ContentHolder(R.drawable.finance_background, "Finance", {}),
-        ContentHolder(R.drawable.crypto_background, "Crypto", {})
+        ContentHolder(R.drawable.crypto_background, "Crypto") { navController.navigate(Screen.CryptoScreen.route) }
     )
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {

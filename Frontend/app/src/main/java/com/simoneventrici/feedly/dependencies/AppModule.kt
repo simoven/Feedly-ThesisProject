@@ -3,10 +3,9 @@ package com.simoneventrici.feedly.dependencies
 import android.content.Context
 import com.simoneventrici.feedly.commons.Constants
 import com.simoneventrici.feedly.persistence.DataStorePreferences
-import com.simoneventrici.feedly.remote.api.ActivityAPI
-import com.simoneventrici.feedly.remote.api.AuthAPI
-import com.simoneventrici.feedly.remote.api.NewsAPI
+import com.simoneventrici.feedly.remote.api.*
 import com.simoneventrici.feedly.repository.ActivityRepository
+import com.simoneventrici.feedly.repository.CryptoRepository
 import com.simoneventrici.feedly.repository.NewsRepository
 import dagger.Module
 import dagger.Provides
@@ -56,6 +55,15 @@ class AppModule {
             .build()
             .create(ActivityAPI::class.java)
     }
+    @Provides
+    @Singleton
+    fun providesCryptoAPI(): CryptoAPI {
+        return Retrofit.Builder()
+            .baseUrl("${Constants.FEEDLY_BACKEND_URL}/crypto/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(CryptoAPI::class.java)
+    }
 
     @Provides
     @Singleton
@@ -67,5 +75,25 @@ class AppModule {
     @Singleton
     fun providesActivityRepository(activityAPI: ActivityAPI, @ApplicationContext context: Context): ActivityRepository {
         return ActivityRepository(activityAPI, context)
+    }
+
+    @Provides
+    @Singleton
+    fun providesCryptoRepository(
+        cryptoAPI: CryptoAPI,
+        @ApplicationContext context: Context,
+        coingeckoAPI: CoingeckoAPI
+    ): CryptoRepository {
+        return CryptoRepository(cryptoAPI, context, coingeckoAPI)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCoingeckoAPI(): CoingeckoAPI {
+        return Retrofit.Builder()
+            .baseUrl(Constants.COINGECKO_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(CoingeckoAPI::class.java)
     }
 }

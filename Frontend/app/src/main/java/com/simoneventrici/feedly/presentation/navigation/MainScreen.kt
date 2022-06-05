@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.simoneventrici.feedly.R
+import com.simoneventrici.feedly.presentation.crypto.CryptoScreen
 import com.simoneventrici.feedly.presentation.explore.ExploreScreen
 import com.simoneventrici.feedly.presentation.home.HomeScreen
 import com.simoneventrici.feedly.presentation.profile.ProfileScreen
@@ -57,10 +58,13 @@ fun Navigator(
             ExploreScreen()
         }
         composable(route = Screen.HomeScreen.route) {
-            HomeScreen()
+            HomeScreen(controller)
         }
         composable(route = Screen.ProfileScreen.route) {
             ProfileScreen()
+        }
+        composable(route = Screen.CryptoScreen.route) {
+            CryptoScreen(controller)
         }
     }
 }

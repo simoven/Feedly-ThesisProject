@@ -131,7 +131,7 @@ fun ActivityItemRow(
         }
 
         Spacer(Modifier.weight(1f))
-        
+
         Image(
             painter = rememberAsyncImagePainter(activity.activityParam3),
             contentDescription = "Activity Image",

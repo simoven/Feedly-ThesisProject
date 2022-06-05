@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.commons.getSystemStatusbarHeightInDp
 import com.simoneventrici.feedly.presentation.explore.components.ScrollableTopBar
@@ -45,6 +46,7 @@ fun getWelcomeText(context: Context): String {
 
 @Composable
 fun HomeScreen(
+    navController: NavController,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
 
@@ -117,7 +119,9 @@ fun HomeScreen(
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.height(20.dp))
-            TopicChooser()
+
+            TopicChooser(navController)
+
             Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = LocalContext.current.getString(R.string.your_activity),

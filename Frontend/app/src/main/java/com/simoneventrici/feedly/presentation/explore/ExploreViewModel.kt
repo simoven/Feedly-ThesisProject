@@ -11,13 +11,10 @@ import com.simoneventrici.feedly.model.Emoji
 import com.simoneventrici.feedly.model.News
 import com.simoneventrici.feedly.model.NewsAndReactions
 import com.simoneventrici.feedly.model.primitives.NewsCategory
-import com.simoneventrici.feedly.persistence.SharedNewsData
 import com.simoneventrici.feedly.repository.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -52,13 +49,6 @@ class ExploreViewModel @Inject constructor(
             val currentMap = currentNewsByCategory.value.toMutableMap()
             currentMap[category.value] = it
             currentNewsByCategory.value = currentMap
-            println("FINITO FETCH 1")
-
-            if(it is DataState.Success) {
-                val collection = it.data?.map { obj -> obj.news } ?: emptyList()
-                SharedNewsData.allCategoryNews.addAll(collection)
-            }
-            println("DONE OP 2")
         }.launchIn(viewModelScope)
     }
 

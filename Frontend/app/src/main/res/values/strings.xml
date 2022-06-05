@@ -22,4 +22,8 @@
     <string name="remove_asset_part2">from favourites cryptos</string>
     <string name="adding_team_part2">to favourites teams</string>
     <string name="remove_team_part2">from favourites teams</string>
+    <string name="global_stats">Global Stats</string>
+    <string name="n_coins">N° of coins</string>
+    <string name="total_volume_24h">Total volume 24h</string>
+    <string name="your_favourite_cryptos">Your favourite cryptos</string>
 </resources>
