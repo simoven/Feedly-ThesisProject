@@ -5,4 +5,21 @@
     <string name="explore_btn_content">Explore</string>
     <string name="for_you_btn_content">For You</string>
     <string name="profile_btn_content">Profile</string>
+    <string name="good_morning">Good Morning</string>
+    <string name="good_afternoon">Good Afternoon</string>
+    <string name="good_evening">Good Evening</string>
+    <string name="your_interests">Your interests</string>
+    <string name="your_activity">Your activity</string>
+    <string name="adding_reaction_part1">Reacted</string>
+    <string name="remove_reaction_part1">Removed reaction</string>
+    <string name="adding_reaction_part2">to the news</string>
+    <string name="remove_reaction_part2">to the news</string>
+    <string name="adding_ticker_part1">Added</string>
+    <string name="remove_ticker_part1">Removed</string>
+    <string name="adding_cripto_part2">to favourites cryptos</string>
+    <string name="remove_cripto_part2">from favourites cryptos</string>
+    <string name="adding_asset_part2">to favourites cryptos</string>
+    <string name="remove_asset_part2">from favourites cryptos</string>
+    <string name="adding_team_part2">to favourites teams</string>
+    <string name="remove_team_part2">from favourites teams</string>
 </resources>

@@ -7,8 +7,8 @@ import com.simoneventrici.feedlyBackend.model.primitives.Username
 import java.sql.ResultSet
 
 data class User(
-    private val username: Username,
-    private val email: Email,
+    @JsonIgnore val username: Username,
+    @JsonIgnore val email: Email,
     @JsonIgnore private var password: Password
 ) {
 
@@ -26,8 +26,8 @@ data class User(
     fun getEmail(): String = email.value
     fun getPassword(): String {
         // read-once password
-        val realPasssword = password.value
+        val realPassword = password.value
         password = Password("********", checkValidation = false)
-        return realPasssword
+        return realPassword
     }
 }

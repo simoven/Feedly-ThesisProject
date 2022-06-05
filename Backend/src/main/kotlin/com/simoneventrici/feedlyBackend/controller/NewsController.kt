@@ -33,7 +33,7 @@ class NewsController(
     }
 
     @ExceptionHandler(UnauthorizedException::class)
-    fun handleConnectionError(e: UnauthorizedException): ResponseEntity<JSONObject> {
+    fun handleUnauthorized(e: UnauthorizedException): ResponseEntity<JSONObject> {
         return ResponseEntity(JSONObject().apply { put("msg", e.message) }, HttpStatus.FORBIDDEN)
     }
 
@@ -42,7 +42,7 @@ class NewsController(
         // è stata lanciata l'exception che viola il foreign key constraint, ovvero il news id è sbagliato
         if(e.message?.contains("foreign", ignoreCase = true) == true)
             return ResponseEntity(JSONObject().apply { put("msg", "Invalid news id") }, HttpStatus.BAD_REQUEST)
-
+        println(e)
         // altrimenti è server error
         return ResponseEntity(JSONObject().apply { put("msg", "Internal server error") }, HttpStatus.INTERNAL_SERVER_ERROR)
     }

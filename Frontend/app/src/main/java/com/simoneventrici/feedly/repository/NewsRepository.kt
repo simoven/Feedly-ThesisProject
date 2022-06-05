@@ -19,7 +19,7 @@ import java.io.IOException
 import java.lang.Exception
 import javax.inject.Inject
 
-class NewsRepository @Inject constructor(
+class NewsRepository constructor(
     private val newsAPI: NewsAPI,
     private val context: Context
 ) {
@@ -62,7 +62,6 @@ class NewsRepository @Inject constructor(
         val response = newsAPI.addReactionToNews(authToken, body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
         val responseJson = JSONObject(response.body()?.string() ?: "{}")
         val responseJsonError = JSONObject(response.errorBody()?.string() ?: "{}")
-
         if(response.isSuccessful) {
             val reactionResp = AddReactionResponse(
                 newsId = newsId,
