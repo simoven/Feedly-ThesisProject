@@ -26,4 +26,6 @@
     <string name="n_coins">N° of coins</string>
     <string name="total_volume_24h">Total volume 24h</string>
     <string name="your_favourite_cryptos">Your favourite cryptos</string>
+    <string name="total_market_cap">Total market cap</string>
+    <string name="btc_dominance">BTC Dominance</string>
 </resources>

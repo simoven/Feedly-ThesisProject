@@ -19,7 +19,6 @@ class ActivityRepository constructor(
         try {
             emit(DataState.Loading<List<RecentActivity>>())
             val result = activityAPI.getUserRecentActivity(authToken).map { it.toRecentActivity() }
-            println(result)
             emit(DataState.Success(data = result))
         } catch(e: HttpException) {
             emit(DataState.Error<List<RecentActivity>>(e.localizedMessage ?: context.getString(R.string.unexpected_error_msg)))

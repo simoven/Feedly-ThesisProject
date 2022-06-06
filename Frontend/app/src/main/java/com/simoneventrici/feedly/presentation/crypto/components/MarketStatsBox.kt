@@ -21,6 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.simoneventrici.feedly.R
+import com.simoneventrici.feedly.commons.DataState
+import com.simoneventrici.feedly.commons.convertNumberInCurrency
 import com.simoneventrici.feedly.presentation.crypto.CryptoViewModel
 import com.simoneventrici.feedly.ui.theme.WhiteColor
 import com.simoneventrici.feedly.ui.theme.WhiteDark1
@@ -40,10 +42,9 @@ fun StatsText(modifier: Modifier, title: Int, content: String) {
         Text(
             text = content,
             color = WhiteDark1,
-            fontSize = 16.sp,
+            fontSize = 14.sp,
             fontWeight = FontWeight.W500
         )
-
     }
 }
 
@@ -63,6 +64,8 @@ fun MarketStatsBox(
     } else
         Modifier.height(height)
 
+    val marketStats = cryptoViewModel.cryptoGlobalMarketStats.value
+
     Column(
         modifier = modifier.padding(horizontal = 20.dp)
     ) {
@@ -73,21 +76,37 @@ fun MarketStatsBox(
             fontSize = 24.sp
         )
         Spacer(modifier = Modifier.height(15.dp))
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp)) {
-            StatsText(Modifier.weight(1f), title = R.string.n_coins, content = "1298")
-            StatsText(Modifier.weight(1f),title = R.string.total_volume_24h, content = "\$ 12,789,210,230 ")
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp)) {
-            StatsText(Modifier.weight(1f), title = R.string.n_coins, content = "1298")
-            StatsText(Modifier.weight(1f), title = R.string.total_volume_24h, content = "\$ 12,789,210,230 ")
-        }
-        Spacer(Modifier.height(32.dp))
+
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp)
+            ) {
+                StatsText(Modifier.weight(1f), title = R.string.n_coins, content = marketStats.data?.totalCoins?.toString() ?: "N/A")
+                StatsText(
+                    Modifier.weight(1f),
+                    title = R.string.total_volume_24h,
+                    content = convertNumberInCurrency(marketStats.data?.total24hVolume ?: 0.0, false)
+                )
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp)
+            ) {
+                StatsText(
+                    Modifier.weight(1f),
+                    title = R.string.total_market_cap,
+                    content = convertNumberInCurrency(marketStats.data?.totalMarketCap ?: 0.0, false)
+                )
+                StatsText(
+                    Modifier.weight(1f),
+                    title = R.string.btc_dominance,
+                    content = marketStats.data?.let { "${String.format("%.2f", it.btcDominance)} %" } ?: "N/A"
+                )
+            }
+            Spacer(Modifier.height(32.dp))
+
     }
 }

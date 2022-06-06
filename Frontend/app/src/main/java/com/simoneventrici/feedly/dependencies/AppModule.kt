@@ -82,9 +82,11 @@ class AppModule {
     fun providesCryptoRepository(
         cryptoAPI: CryptoAPI,
         @ApplicationContext context: Context,
-        coingeckoAPI: CoingeckoAPI
+        coingeckoAPI: CoingeckoAPI,
+        coinrankingAPI: CoinrankingAPI,
+        constants: Constants
     ): CryptoRepository {
-        return CryptoRepository(cryptoAPI, context, coingeckoAPI)
+        return CryptoRepository(cryptoAPI, context, coingeckoAPI, coinrankingAPI, constants)
     }
 
     @Provides
@@ -95,5 +97,21 @@ class AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(CoingeckoAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppConstants(@ApplicationContext context: Context): Constants {
+        return Constants(context)
+    }
+
+    @Provides
+    @Singleton
+    fun providesCoinrankingApi(): CoinrankingAPI {
+        return Retrofit.Builder()
+            .baseUrl(Constants.COINRANKING_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(CoinrankingAPI::class.java)
     }
 }

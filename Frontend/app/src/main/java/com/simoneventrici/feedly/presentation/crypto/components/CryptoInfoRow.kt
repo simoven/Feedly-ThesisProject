@@ -122,7 +122,7 @@ fun CryptoInfoRow(
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = convertNumberInCurrency(cryptoMarketData.currentPrice).replace("$", "$ "),
+                    text = convertNumberInCurrency(cryptoMarketData.currentPrice),
                     color = WhiteColor,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold

@@ -25,6 +25,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name = "coinrankingKey"
+            android:value = "${COINRANKING_KEY}"
+            />
     </application>
 
 </manifest>

@@ -11,6 +11,7 @@ import com.simoneventrici.feedly.commons.Constants
 import com.simoneventrici.feedly.commons.DataState
 import com.simoneventrici.feedly.model.Crypto
 import com.simoneventrici.feedly.model.CryptoMarketData
+import com.simoneventrici.feedly.model.CryptoMarketStats
 import com.simoneventrici.feedly.repository.CryptoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -24,6 +25,7 @@ class CryptoViewModel @Inject constructor(
     
     val favouritesCrypto = mutableStateOf<DataState<List<Crypto>>>(DataState.None())
     val cryptosMarketData = mutableStateOf<Map<String, CryptoMarketData>>(mapOf())
+    val cryptoGlobalMarketStats = mutableStateOf<DataState<CryptoMarketStats>>(DataState.None())
 
     val statsBoxHeight = mutableStateOf(0)
     private val _scrollUp = MutableLiveData(false)
@@ -32,6 +34,7 @@ class CryptoViewModel @Inject constructor(
 
     init {
         fetchFavouritesCrypto(Constants.TEST_TOKEN)
+        fetchMarketStats()
     }
 
     private fun fetchFavouritesCrypto(authToken: String) {
@@ -39,6 +42,12 @@ class CryptoViewModel @Inject constructor(
             favouritesCrypto.value = it
             if(it is DataState.Success)
                 fetchCryptoMarketData()
+        }.launchIn(viewModelScope)
+    }
+
+    private fun fetchMarketStats() {
+        cryptoRepository.getGlobalMarketStats().onEach {
+            cryptoGlobalMarketStats.value = it
         }.launchIn(viewModelScope)
     }
 
@@ -67,5 +76,9 @@ class CryptoViewModel @Inject constructor(
 
         if(position == 0 && _scrollUp.value == true)
             _scrollUp.value = false
+    }
+
+    fun dividerScrolled(isUp: Boolean) {
+        _scrollUp.value = isUp
     }
 }

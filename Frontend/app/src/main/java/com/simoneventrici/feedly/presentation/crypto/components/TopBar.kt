@@ -31,6 +31,7 @@ fun TopBar(
     ) {
         Box(
             Modifier.clip(RoundedCornerShape(20.dp)).clickable { navController.popBackStack() },
+            contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(id = R.drawable.back_arrow_icon),
@@ -43,9 +44,8 @@ fun TopBar(
         Text(
            text = "Crypto",
            color = WhiteColor,
-           fontSize = 18.sp,
-           fontWeight = FontWeight.Bold
+           fontSize = 20.sp,
+           fontWeight = FontWeight.Bold,
         )
-
     }
 }

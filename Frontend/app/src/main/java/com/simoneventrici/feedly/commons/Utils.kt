@@ -36,12 +36,12 @@ private fun getExp(number: Double): Int {
     return count
 }
 
-fun convertNumberInCurrency(number: Double): String {
+fun convertNumberInCurrency(number: Double, hasDecimals: Boolean = true): String {
     val format: NumberFormat = NumberFormat.getCurrencyInstance()
-    format.maximumFractionDigits = max(2, getDecimalPlaces(number) + 2)
+    format.maximumFractionDigits = if(hasDecimals) max(2, getDecimalPlaces(number) + 2) else 0
     format.currency = Currency.getInstance("USD")
 
-    return format.format(number)
+    return format.format(number).replace("$", "$ ")
 }
 
 fun convertMarketCap(number: Double): String {
