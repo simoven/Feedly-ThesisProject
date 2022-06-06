@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
@@ -74,12 +75,16 @@ fun CryptoInfoRow(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            Column {
+            Column(
+                Modifier.widthIn(min = 0.dp, max = 90.dp)
+            ) {
                 Text(
                     text = crypto.name,
                     color = WhiteColor,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontSize = 14.sp,
+                    maxLines = 1,
+                    fontWeight = FontWeight.SemiBold,
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 Row(
@@ -102,7 +107,9 @@ fun CryptoInfoRow(
                         text = crypto.ticker.uppercase(),
                         color = WhiteDark2,
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
@@ -110,22 +117,23 @@ fun CryptoInfoRow(
             LineChart(
                 values = cryptoMarketData.sparkline,
                 modifier = Modifier
-                    .width(120.dp)
+                    .width(105.dp)
                     .height(38.dp),
                 strokeColor = if(cryptoMarketData.change7d < 0) ChartRed else ChartGreen,
                 strokeDp = 2,
                 showLabel = false,
                 showGradient = false
             )
-            Spacer(modifier = Modifier.weight(1.2f))
+            Spacer(modifier = Modifier.weight(1f))
             Column(
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
                     text = convertNumberInCurrency(cryptoMarketData.currentPrice),
                     color = WhiteColor,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(

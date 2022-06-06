@@ -1,6 +1,7 @@
 package com.simoneventrici.feedly.presentation.crypto.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
@@ -18,18 +19,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.presentation.crypto.CryptoViewModel
-import com.simoneventrici.feedly.ui.theme.LighterBlack
-import com.simoneventrici.feedly.ui.theme.LighterGray
-import com.simoneventrici.feedly.ui.theme.LighterGray2
-import com.simoneventrici.feedly.ui.theme.WhiteColor
+import com.simoneventrici.feedly.presentation.navigation.Screen
+import com.simoneventrici.feedly.ui.theme.*
 
 @Composable
 fun FavouriteCryptosBox(
     cryptoViewModel: CryptoViewModel,
+    navController: NavController
 ) {
     val cryptoListState = rememberLazyListState()
 
@@ -60,17 +62,28 @@ fun FavouriteCryptosBox(
         }
     }
 
-
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            text = LocalContext.current.getString(R.string.your_favourite_cryptos),
-            color = WhiteColor,
-            fontSize = 24.sp,
-            fontWeight = Bold,
-            modifier = scrollableModifier.padding(horizontal = 20.dp)
-        )
+        Row(
+            scrollableModifier.fillMaxWidth().padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = LocalContext.current.getString(R.string.your_favourite_cryptos),
+                color = WhiteColor,
+                fontSize = 24.sp,
+                fontWeight = Bold,
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = LocalContext.current.getString(R.string.add_new_crypto),
+                color = MainGreen,
+                fontSize = 18.sp,
+                fontWeight = W500,
+                modifier = Modifier.clickable { navController.navigate(Screen.AddNewCryptoScreen.route) }
+            )
+        }
         Spacer(modifier = Modifier.height(10.dp))
         Box(
             modifier = Modifier
@@ -94,7 +107,7 @@ fun FavouriteCryptosBox(
                     )
                     Spacer(scrollableModifier.height(8.dp))
                 }
-                items(items = cryptoState.value.data ?: emptyList()) { crypto ->
+                items(items = cryptoState.value.data?.sortedBy { it.name } ?: emptyList()) { crypto ->
                     cryptoMarketData.value[crypto.ticker]?.run {
                         CryptoInfoRow(crypto = crypto, cryptoMarketData = this)
                         Divider(

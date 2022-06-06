@@ -12,6 +12,9 @@ import com.simoneventrici.feedly.remote.api.CoinrankingAPI
 import com.simoneventrici.feedly.remote.api.CryptoAPI
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -57,6 +60,23 @@ class CryptoRepository(
             emit(DataState.Error<CryptoMarketStats>(e.localizedMessage ?: context.getString(R.string.unexpected_error_msg)))
         } catch(e: IOException) {
             emit(DataState.Error<CryptoMarketStats>(context.getString(R.string.cannot_reach_server_msg)))
+        }
+    }
+
+    suspend fun addCryptoToFavourite(authToken: String, ticker: String): Boolean {
+        val body = JSONObject().apply {
+            put("ticker", ticker)
+        }
+        val response = cryptoAPI.addCryptofavourite(authToken, body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
+        println(response.body()?.string())
+        return response.isSuccessful
+    }
+
+    suspend fun getAllCryptos(): List<Crypto> {
+        return try {
+            cryptoAPI.getAllCryptos().map { it.toCrypto() }
+        } catch(e: Exception) {
+            emptyList()
         }
     }
 }

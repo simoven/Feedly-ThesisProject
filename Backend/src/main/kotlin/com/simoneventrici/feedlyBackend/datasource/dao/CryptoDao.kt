@@ -13,7 +13,7 @@ class CryptoDao(
     @Autowired val jdbcTemplate: JdbcTemplate
 ): Dao<Crypto> {
     private val getAllQuery = "select * from crypto"
-    private val saveQuery = "insert into crypto values(?,?,?,?) on conflict(\"ticker\") do nothing"
+    private val saveQuery = "insert into crypto values(?,?,?,?,?) on conflict(\"ticker\") do nothing"
     private val removeQuery = "delete from crypto where ticker=?"
     private val getUserFavouritesCryptoQuery = "select * from user_like_crypto where \"user\"=?"
     private val addCryptoFavouriteQuery = "insert into user_like_crypto values(?,?) on conflict do nothing"
@@ -33,6 +33,7 @@ class CryptoDao(
             it.setString(2, elem.name)
             it.setString(3, elem.statsId)
             it.setInt(4, elem.graphicId)
+            it.setString(5, elem.imageUrl)
             it.execute()
         }
     }

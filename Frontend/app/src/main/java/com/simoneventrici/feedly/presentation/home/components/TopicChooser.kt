@@ -40,7 +40,7 @@ fun ContentCard(
     var sizeImage by remember { mutableStateOf(IntSize.Zero) }
 
     Box(modifier = Modifier
-        .width(175.dp)
+        .width(170.dp)
         .height(120.dp)
         .clip(RoundedCornerShape(12.dp))
         .clickable { content.callback() }

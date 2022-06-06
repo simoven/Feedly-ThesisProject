@@ -16,6 +16,7 @@ import com.simoneventrici.feedly.repository.CryptoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,6 +27,7 @@ class CryptoViewModel @Inject constructor(
     val favouritesCrypto = mutableStateOf<DataState<List<Crypto>>>(DataState.None())
     val cryptosMarketData = mutableStateOf<Map<String, CryptoMarketData>>(mapOf())
     val cryptoGlobalMarketStats = mutableStateOf<DataState<CryptoMarketStats>>(DataState.None())
+    val allCryptos = mutableStateOf<List<Crypto>>(emptyList())
 
     val statsBoxHeight = mutableStateOf(0)
     private val _scrollUp = MutableLiveData(false)
@@ -33,8 +35,15 @@ class CryptoViewModel @Inject constructor(
         get() = _scrollUp
 
     init {
+        fetchAllCryptos()
         fetchFavouritesCrypto(Constants.TEST_TOKEN)
         fetchMarketStats()
+    }
+
+    private fun fetchAllCryptos() {
+        viewModelScope.launch {
+            allCryptos.value = cryptoRepository.getAllCryptos()
+        }
     }
 
     private fun fetchFavouritesCrypto(authToken: String) {
@@ -67,6 +76,22 @@ class CryptoViewModel @Inject constructor(
                     }
                 }
             }.launchIn(viewModelScope)
+        }
+    }
+
+    fun addCryptosToFavourite(cryptos: List<Crypto>) {
+        viewModelScope.launch {
+            cryptos.forEach { crypto ->
+                if(cryptoRepository.addCryptoToFavourite(Constants.TEST_TOKEN, crypto.ticker) && favouritesCrypto.value is DataState.Success) {
+                    val oldState = favouritesCrypto.value
+                    val oldList = favouritesCrypto.value.data?.toMutableList() ?: mutableListOf()
+                    oldList.add(crypto)
+                    val newState = DataState.Success(data = oldList.toList())
+                    favouritesCrypto.value = newState
+
+                }
+            }
+            fetchFavouritesCrypto(Constants.TEST_TOKEN)
         }
     }
 

@@ -16,17 +16,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.simoneventrici.feedly.R
+import com.simoneventrici.feedly.ui.theme.LighterBlack
 import com.simoneventrici.feedly.ui.theme.LighterGray
 import com.simoneventrici.feedly.ui.theme.WhiteColor
 
 @Composable
 fun TopBar(
-    navController: NavController
+    navController: NavController,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(LighterGray).padding(vertical = 10.dp, horizontal = 15.dp),
+            .background(LighterBlack).padding(vertical = 10.dp, horizontal = 15.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(

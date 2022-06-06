@@ -43,12 +43,13 @@ class CryptoController(
     @PostMapping("addFavourite")
     fun addCryptoFavourite(
         @RequestHeader("Authorization") authToken: String,
-        @RequestBody ticker: String
-    ) {
+        @RequestBody body: JSONObject
+    ): ResponseEntity<JSONObject> {
         val user = userService.checkUserToken(authToken) ?: throw UnauthorizedException(msg = "Invalid token provided")
-        val tickerObj = Ticker(ticker)
+        val tickerObj = Ticker(body["ticker"] as String)
         if(!cryptoService.isCryptoSupported(tickerObj)) throw  IllegalStateException("Invalid crypto ticker provided")
         cryptoService.addCryptoFavourite(user.username, tickerObj)
+        return ResponseEntity(JSONObject().apply { put("msg", "Crypto added succesfully") }, HttpStatus.OK)
     }
 
     @PostMapping("removeFavourite")
@@ -61,4 +62,5 @@ class CryptoController(
         if(!cryptoService.isCryptoSupported(tickerObj)) throw  IllegalStateException("Invalid crypto ticker provided")
         cryptoService.removeCryptoFavourite(user.username, tickerObj)
     }
+
 }

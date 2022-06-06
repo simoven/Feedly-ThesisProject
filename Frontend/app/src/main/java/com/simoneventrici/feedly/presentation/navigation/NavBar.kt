@@ -1,10 +1,8 @@
 package com.simoneventrici.feedly.presentation.navigation
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Text
@@ -17,7 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.simoneventrici.feedly.ui.theme.LighterBlack
 import com.simoneventrici.feedly.ui.theme.LighterGray
+import com.simoneventrici.feedly.ui.theme.LighterGrayNavBar
 import com.simoneventrici.feedly.ui.theme.MainGreen
 
 @Composable
@@ -31,8 +31,7 @@ fun NavBar(
 
     BottomNavigation(
         modifier = modifier,
-        backgroundColor = LighterGray,
-        elevation = 10.dp
+        backgroundColor = LighterGrayNavBar
     ) {
         items.forEach() { item ->
             val selected = backStackEntry.value?.destination?.route == item.route

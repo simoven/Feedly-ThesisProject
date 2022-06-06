@@ -6,16 +6,20 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.presentation.crypto.CryptoScreen
+import com.simoneventrici.feedly.presentation.crypto.CryptoViewModel
+import com.simoneventrici.feedly.presentation.crypto.components.FavouriteCryptoChooser
 import com.simoneventrici.feedly.presentation.explore.ExploreScreen
 import com.simoneventrici.feedly.presentation.home.HomeScreen
 import com.simoneventrici.feedly.presentation.profile.ProfileScreen
 import com.simoneventrici.feedly.ui.theme.LighterGray
+import com.simoneventrici.feedly.ui.theme.LighterGrayNavBar
 
 data class NavigationItem(
     val uncheckedIcon: Int,
@@ -40,7 +44,7 @@ fun MainScreen() {
                     navController.navigate(it.route)
                 })
         },
-        backgroundColor = LighterGray
+        backgroundColor = LighterGrayNavBar
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             // Dentro lo scaffold c'è il navHost che cambia le schermate
@@ -53,6 +57,9 @@ fun MainScreen() {
 fun Navigator(
     controller: NavHostController
 ) {
+    val cryptoViewModel: CryptoViewModel = hiltViewModel()
+    val userFavouritesCrypto = cryptoViewModel.favouritesCrypto.value.data?.map { it.ticker } ?: emptyList()
+
     NavHost(navController = controller, startDestination = Screen.ExploreScreen.route) {
         composable(route = Screen.ExploreScreen.route) {
             ExploreScreen()
@@ -64,7 +71,14 @@ fun Navigator(
             ProfileScreen()
         }
         composable(route = Screen.CryptoScreen.route) {
-            CryptoScreen(controller)
+            CryptoScreen(navController = controller, cryptoViewModel = cryptoViewModel)
+        }
+        composable(route = Screen.AddNewCryptoScreen.route) {
+            FavouriteCryptoChooser(
+                // prendo le cripto che non sono già state preferite dall'utente
+                cryptoViewModel,
+                allCryptos = cryptoViewModel.allCryptos.value.filter { !userFavouritesCrypto.contains(it.ticker) },
+                navController = controller)
         }
     }
 }

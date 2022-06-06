@@ -24,8 +24,8 @@ fun CryptoScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = getSystemStatusbarHeightInDp(LocalContext.current).dp)
-            .background(LighterBlack),
+            .background(LighterBlack)
+            .padding(top = getSystemStatusbarHeightInDp(LocalContext.current).dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopBar(navController = navController)
@@ -33,6 +33,6 @@ fun CryptoScreen(
         Spacer(modifier = Modifier.height(20.dp))
         MarketStatsBox(cryptoViewModel)
 
-        FavouriteCryptosBox(cryptoViewModel)
+        FavouriteCryptosBox(cryptoViewModel, navController)
     }
 }

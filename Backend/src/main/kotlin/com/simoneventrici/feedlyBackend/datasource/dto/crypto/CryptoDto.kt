@@ -6,7 +6,7 @@ data class CryptoDto(
     val id: String,
     val image: String,
     val name: String,
-    val symbol: String
+    val symbol: String,
 ) {
     private fun getIdFromImageUrl(url: String): Int {
         val p1 = url.replace("https://assets.coingecko.com/coins/images/", "")
@@ -19,7 +19,8 @@ data class CryptoDto(
             ticker = symbol,
             statsId = id,
             name = name,
-            graphicId = getIdFromImageUrl(image)
+            graphicId = getIdFromImageUrl(image),
+            imageUrl = image
         )
     }
 }

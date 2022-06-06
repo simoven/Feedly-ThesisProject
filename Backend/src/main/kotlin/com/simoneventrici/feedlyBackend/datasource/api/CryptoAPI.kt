@@ -20,10 +20,10 @@ class CryptoAPI(
     private val BASE_URL = "https://api.coingecko.com/api/v3"
 
     init {
-        // getTopCryptos()
+        //getTopCryptos()
     }
 
-    fun getTopCryptos() {
+    private fun getTopCryptos() {
         val response = restTemplate.getForEntity<Array<CryptoDto>>("$BASE_URL/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false")
         if(response.statusCode == HttpStatus.OK) {
             response.body?.forEach {
