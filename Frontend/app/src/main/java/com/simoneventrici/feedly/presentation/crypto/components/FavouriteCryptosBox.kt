@@ -1,9 +1,10 @@
 package com.simoneventrici.feedly.presentation.crypto.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,8 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.unit.dp
@@ -26,7 +29,12 @@ import androidx.navigation.NavController
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.presentation.crypto.CryptoViewModel
 import com.simoneventrici.feedly.presentation.navigation.Screen
-import com.simoneventrici.feedly.ui.theme.*
+import com.simoneventrici.feedly.ui.theme.ChartRed
+import com.simoneventrici.feedly.ui.theme.LighterBlack
+import com.simoneventrici.feedly.ui.theme.MainGreen
+import com.simoneventrici.feedly.ui.theme.WhiteColor
+import me.saket.swipe.SwipeAction
+import me.saket.swipe.SwipeableActionsBox
 
 @Composable
 fun FavouriteCryptosBox(
@@ -37,6 +45,9 @@ fun FavouriteCryptosBox(
 
     val cryptoState = cryptoViewModel.favouritesCrypto
     val cryptoMarketData = cryptoViewModel.cryptosMarketData
+    val sortedCryptos = remember(cryptoState.value) { cryptoState.value.data?.sortedBy { it.name } ?: emptyList()}
+
+    // serve per capire sto facendo drag dal divider
     var dividerYOffset by remember { mutableStateOf(0f) }
 
     // questo modifier, se scrollato sopra o sotto, permette di espandere/comprimere la card di tutte le cripto
@@ -66,7 +77,9 @@ fun FavouriteCryptosBox(
         modifier = Modifier.fillMaxSize()
     ) {
         Row(
-            scrollableModifier.fillMaxWidth().padding(horizontal = 20.dp),
+            scrollableModifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -89,7 +102,7 @@ fun FavouriteCryptosBox(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-                .background(LighterGray.copy(0.6f))
+                .background(Color(0xFF202020))
         ) {
             LazyColumn(
                 Modifier.fillMaxSize(),
@@ -107,13 +120,44 @@ fun FavouriteCryptosBox(
                     )
                     Spacer(scrollableModifier.height(8.dp))
                 }
-                items(items = cryptoState.value.data?.sortedBy { it.name } ?: emptyList()) { crypto ->
+                items(items = sortedCryptos) { crypto ->
                     cryptoMarketData.value[crypto.ticker]?.run {
-                        CryptoInfoRow(crypto = crypto, cryptoMarketData = this)
+                        var isRemoved = remember(crypto.ticker) { mutableStateOf(false) }
+
+                        // se rimuovo l'elemento, dopo la ricomposizione la riga successiva avrà lo stesso rowOffset
+                        // della riga eliminata, causando una brutta animazione. come workaround imposto l'animazione a 0ms quando il flag
+                        // removed è false, in modo tale che lo state della riga eliminata torni subito dov'era prima
+                        val rowOffset = animateFloatAsState(
+                            targetValue = if(isRemoved.value) -2000f else 0f,
+                            animationSpec = if(!isRemoved.value) tween(0) else tween(500)
+                        ) {
+                            if(it == -2000f) {
+                                cryptoViewModel.removeFavouriteCrypto(crypto)
+                            }
+                        }
+
+                        val removeFavourite = SwipeAction(
+                            icon = painterResource(id = R.drawable.remove_icon),
+                            onSwipe = { isRemoved.value = true },
+                            background = ChartRed,
+                        )
+                        SwipeableActionsBox(
+                            swipeThreshold = 60.dp,
+                            endActions = listOf(removeFavourite),
+                        ) {
+                            CryptoInfoRow(
+                                crypto = crypto,
+                                cryptoMarketData = this@run,
+                                modifier = Modifier.graphicsLayer {
+                                    translationX = rowOffset.value
+                                })
+                        }
                         Divider(
                             Modifier
                                 .height(1.dp)
-                                .fillMaxWidth(.95f), color = LighterBlack.copy(.3f))
+                                .fillMaxWidth(.95f), color = LighterBlack.copy(.3f)
+                        )
+
                     }
                 }
             }

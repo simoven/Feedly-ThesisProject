@@ -7,12 +7,12 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.simoneventrici.feedly"
         minSdk 26
-        targetSdk 31
+        targetSdk 32
         versionCode 1
         versionName "1.0"
 
@@ -76,4 +76,6 @@ dependencies {
     implementation "io.coil-kt:coil-compose:2.0.0-rc01"
     implementation "com.google.accompanist:accompanist-pager:0.24.9-beta"
     implementation "com.google.accompanist:accompanist-pager-indicators:0.24.9-beta"
+    implementation "me.saket.swipe:swipe:1.0.0"
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.24.10-beta"
 }

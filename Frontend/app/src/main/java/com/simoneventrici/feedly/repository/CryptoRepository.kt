@@ -68,8 +68,14 @@ class CryptoRepository(
             put("ticker", ticker)
         }
         val response = cryptoAPI.addCryptofavourite(authToken, body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
-        println(response.body()?.string())
         return response.isSuccessful
+    }
+
+    suspend fun removeCryptoFromFavourite(authToken: String, ticker: String) {
+        val body = JSONObject().apply {
+            put("ticker", ticker)
+        }
+        cryptoAPI.removeCryptofavourite(authToken, body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
     }
 
     suspend fun getAllCryptos(): List<Crypto> {

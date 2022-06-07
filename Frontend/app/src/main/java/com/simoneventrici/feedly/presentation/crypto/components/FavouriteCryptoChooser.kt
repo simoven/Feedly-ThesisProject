@@ -147,14 +147,10 @@ fun FavouriteCryptoChooser(
             LazyColumn(
                 Modifier.fillMaxSize()
             ) {
-                itemsIndexed(allCryptos
-                    .filter {
-                        it.name.contains(textOfCryptoQuery.value) || it.ticker.contains(
-                            textOfCryptoQuery.value
-                        )
-                    }
-                    .sortedBy { it.name.lowercase() }
+                itemsIndexed(
+                    cryptos
                 ) { idx, crypto ->
+                    // controllo se questa crypto è stata aggiunta all'elenco delle crypto scelte
                     val checked = remember { mutableStateOf(cryptoChoosen.find { it.ticker == crypto.ticker } != null) }
 
                     Row(
@@ -192,6 +188,11 @@ fun FavouriteCryptoChooser(
                                 checkedColor = MainGreen
                             )
                         )
+                    }
+                    
+                    if(idx == cryptos.size - 1) {
+                        // lo spacer serve altrimenti il FAB si sovrappone all'ultima checkbox impedendo di premerla
+                        Spacer(modifier = Modifier.height(60.dp))
                     }
                 }
 

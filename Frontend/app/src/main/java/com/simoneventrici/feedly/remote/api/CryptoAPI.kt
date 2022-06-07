@@ -24,4 +24,10 @@ interface CryptoAPI {
         @Header("Authorization") authToken: String,
         @Body body: RequestBody
     ): Response<ResponseBody>
+
+    @POST("removeFavourite")
+    suspend fun removeCryptofavourite(
+        @Header("Authorization") authToken: String,
+        @Body body: RequestBody
+    ): Response<ResponseBody>
 }

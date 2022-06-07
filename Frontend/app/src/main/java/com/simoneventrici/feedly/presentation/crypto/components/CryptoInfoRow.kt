@@ -49,14 +49,16 @@ fun PercentageIndicator(label: String, percentage: Double) {
 @Composable
 fun CryptoInfoRow(
     crypto: Crypto,
-    cryptoMarketData: CryptoMarketData
+    cryptoMarketData: CryptoMarketData,
+    modifier: Modifier = Modifier
 ) {
     val expanded = remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .animateContentSize()
+            .background(Color(0xFF202020))
             .clickable {
                 expanded.value = !expanded.value
             }

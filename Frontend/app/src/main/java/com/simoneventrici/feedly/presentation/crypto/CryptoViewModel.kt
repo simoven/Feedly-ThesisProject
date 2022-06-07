@@ -28,6 +28,7 @@ class CryptoViewModel @Inject constructor(
     val cryptosMarketData = mutableStateOf<Map<String, CryptoMarketData>>(mapOf())
     val cryptoGlobalMarketStats = mutableStateOf<DataState<CryptoMarketStats>>(DataState.None())
     val allCryptos = mutableStateOf<List<Crypto>>(emptyList())
+    val isRefreshing = mutableStateOf(false)
 
     val statsBoxHeight = mutableStateOf(0)
     private val _scrollUp = MutableLiveData(false)
@@ -46,7 +47,7 @@ class CryptoViewModel @Inject constructor(
         }
     }
 
-    private fun fetchFavouritesCrypto(authToken: String) {
+    fun fetchFavouritesCrypto(authToken: String) {
         cryptoRepository.getUserFavouritesCrypto(authToken).onEach {
             favouritesCrypto.value = it
             if(it is DataState.Success)
@@ -83,16 +84,24 @@ class CryptoViewModel @Inject constructor(
         viewModelScope.launch {
             cryptos.forEach { crypto ->
                 if(cryptoRepository.addCryptoToFavourite(Constants.TEST_TOKEN, crypto.ticker) && favouritesCrypto.value is DataState.Success) {
-                    val oldState = favouritesCrypto.value
                     val oldList = favouritesCrypto.value.data?.toMutableList() ?: mutableListOf()
                     oldList.add(crypto)
                     val newState = DataState.Success(data = oldList.toList())
                     favouritesCrypto.value = newState
-
                 }
             }
             fetchFavouritesCrypto(Constants.TEST_TOKEN)
         }
+    }
+
+    fun removeFavouriteCrypto(crypto: Crypto) {
+        viewModelScope.launch {
+            cryptoRepository.removeCryptoFromFavourite(Constants.TEST_TOKEN, crypto.ticker)
+        }
+        val oldList = favouritesCrypto.value.data?.toMutableList() ?: mutableListOf()
+        oldList.removeIf { it.ticker == crypto.ticker }
+        favouritesCrypto.value = DataState.Success(data = oldList.toList())
+
     }
 
     fun updateScrollPosition(position: Int) {
