@@ -148,7 +148,7 @@ class AppModule {
     fun provideWeatherRepository(
         @ApplicationContext context: Context,
         weatherAPI: WeatherAPI,
-        constants: Constants
+        constants: Constants,
     ): WeatherRepository {
         return WeatherRepository(weatherAPI, context, constants)
     }

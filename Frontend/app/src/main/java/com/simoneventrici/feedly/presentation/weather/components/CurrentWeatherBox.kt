@@ -83,7 +83,8 @@ fun HourlyWeatherBox(
 fun CurrentWeatherBox(
     weatherOverview: WeatherOverview,
     geoLocalization: GeoLocalizationInfo?,
-    navController: NavController
+    navController: NavController,
+    onSearchClicked: () -> Unit
 ) {
     val currentTime: String = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
     val hour = (currentTime.split(":")[0]).toInt()
@@ -139,7 +140,7 @@ fun CurrentWeatherBox(
             Image(
                 painter = painterResource(id = R.drawable.search_unchecked),
                 contentDescription = "search button",
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(28.dp).clickable { onSearchClicked() }
             )
         }
 

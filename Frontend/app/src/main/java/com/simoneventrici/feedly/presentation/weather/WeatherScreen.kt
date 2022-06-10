@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.simoneventrici.feedly.presentation.navigation.Screen
 import com.simoneventrici.feedly.presentation.weather.components.CurrentWeatherBox
 import com.simoneventrici.feedly.presentation.weather.components.DailyWeatherBox
 import com.simoneventrici.feedly.ui.theme.LighterBlack
@@ -21,6 +22,7 @@ fun WeatherScreen(
 ) {
     val weatherState = weatherViewModel.currentWeatherStatus.value
     val geoLocalizationStatus = weatherViewModel.geoLocalizationStatus.value
+    val callback = { navController.navigate(Screen.CityChooserScreen.route) }
 
     Column(
         modifier = Modifier
@@ -28,7 +30,12 @@ fun WeatherScreen(
             .background(LighterBlack)
     ) {
         weatherState.data?.let {
-            CurrentWeatherBox(weatherOverview = it, geoLocalization = geoLocalizationStatus, navController = navController)
+            CurrentWeatherBox(
+                weatherOverview = it,
+                geoLocalization = geoLocalizationStatus,
+                navController = navController,
+                onSearchClicked = callback
+            )
             Spacer(modifier = Modifier.height(20.dp))
             DailyWeatherBox(weatherOverview = it)
         }

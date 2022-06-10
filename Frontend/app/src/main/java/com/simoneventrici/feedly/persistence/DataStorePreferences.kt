@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.simoneventrici.feedly.model.GeoLocalizationInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -14,6 +15,7 @@ class DataStorePreferences(private val context: Context) {
     private val dataStore = context.appDataStore
 
     private val AUTH_TOKEN_KEY = stringPreferencesKey("auth_token")
+    private val GEO_LOCALIZATION_KEY = stringPreferencesKey("geo_localization_info")
 
     suspend fun saveToken(token: String) {
         dataStore.edit { preference ->
@@ -21,6 +23,14 @@ class DataStorePreferences(private val context: Context) {
         }
     }
 
+    suspend fun saveGeoCoords(geoLocalizationInfo: GeoLocalizationInfo) {
+        dataStore.edit { preference ->
+            preference[GEO_LOCALIZATION_KEY] = geoLocalizationInfo.toString()
+        }
+    }
+
     // è un flusso che emette un valore ogni volta che cambia il token salvato
     val tokensFlow: Flow<String?> = dataStore.data.map { preference -> preference[AUTH_TOKEN_KEY]}
+
+    val geoInfoFlow: Flow<GeoLocalizationInfo?> = dataStore.data.map { preference -> GeoLocalizationInfo.parseFromString(preference[GEO_LOCALIZATION_KEY] ?: "") }
 }

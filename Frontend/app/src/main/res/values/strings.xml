@@ -34,4 +34,7 @@
     <string name="feels_like">Feels like</string>
     <string name="today">Today</string>
     <string name="wind">Wind</string>
+    <string name="search_city">Search city</string>
+    <string name="clear">Clear</string>
+    <string name="searching">Searching</string>
 </resources>

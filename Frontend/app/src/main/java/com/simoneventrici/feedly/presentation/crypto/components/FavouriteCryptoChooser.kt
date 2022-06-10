@@ -128,10 +128,6 @@ fun FavouriteCryptoChooser(
         .sortedBy { it.name.lowercase() }
     val cryptoChoosen = remember { mutableListOf<Crypto>()}
 
-    LaunchedEffect(key1 = cryptoChoosen.size) {
-        println(cryptoChoosen)
-    }
-
     Column(
         Modifier
             .fillMaxSize()
@@ -199,7 +195,7 @@ fun FavouriteCryptoChooser(
             }
 
             Box(
-                modifier = Modifier.padding(bottom = 10.dp, end = 10.dp)
+                modifier = Modifier.padding(bottom = 15.dp, end = 15.dp)
             ) {
                 FloatingActionButton(
                     backgroundColor = MainGreen,

@@ -7,7 +7,7 @@ class Constants(
    val context: Context
 ) {
     companion object {
-        const val FEEDLY_BACKEND_URL = "http://192.168.1.14:8080"
+        const val FEEDLY_BACKEND_URL = "http://192.168.43.232:8080"
         const val COINRANKING_URL = "https://api.coinranking.com/v2/"
         const val COINGECKO_URL = "https://api.coingecko.com/api/v3/"
         const val WEATHER_API_URL = "https://api.openweathermap.org/data/3.0/"

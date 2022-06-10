@@ -20,6 +20,7 @@ import com.simoneventrici.feedly.presentation.home.HomeScreen
 import com.simoneventrici.feedly.presentation.profile.ProfileScreen
 import com.simoneventrici.feedly.presentation.weather.WeatherScreen
 import com.simoneventrici.feedly.presentation.weather.WeatherViewModel
+import com.simoneventrici.feedly.presentation.weather.components.CityChooserScreen
 import com.simoneventrici.feedly.ui.theme.LighterGray
 import com.simoneventrici.feedly.ui.theme.LighterGrayNavBar
 
@@ -84,7 +85,10 @@ fun Navigator(
                 navController = controller)
         }
         composable(route = Screen.WeatherScreen.route) {
-            WeatherScreen(weatherViewModel, controller)
+            WeatherScreen(weatherViewModel = weatherViewModel, navController = controller)
+        }
+        composable(route = Screen.CityChooserScreen.route) {
+            CityChooserScreen(navController = controller, weatherViewModel = weatherViewModel)
         }
     }
 }
