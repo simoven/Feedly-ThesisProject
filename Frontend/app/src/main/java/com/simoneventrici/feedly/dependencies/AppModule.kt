@@ -4,9 +4,7 @@ import android.content.Context
 import com.simoneventrici.feedly.commons.Constants
 import com.simoneventrici.feedly.persistence.DataStorePreferences
 import com.simoneventrici.feedly.remote.api.*
-import com.simoneventrici.feedly.repository.ActivityRepository
-import com.simoneventrici.feedly.repository.CryptoRepository
-import com.simoneventrici.feedly.repository.NewsRepository
+import com.simoneventrici.feedly.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -113,5 +111,45 @@ class AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(CoinrankingAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePositionStackApi(): PositionStackAPI {
+        return Retrofit.Builder()
+            .baseUrl(Constants.POSITIONSTACK_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(PositionStackAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWeatherApi(): WeatherAPI {
+        return Retrofit.Builder()
+            .baseUrl(Constants.WEATHER_API_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(WeatherAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGeoLocalizationRepository(
+        @ApplicationContext context: Context,
+        positionStackAPI: PositionStackAPI,
+        constants: Constants
+    ): GeoLocalizationRepository {
+        return GeoLocalizationRepository(positionStackAPI, context, constants)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWeatherRepository(
+        @ApplicationContext context: Context,
+        weatherAPI: WeatherAPI,
+        constants: Constants
+    ): WeatherRepository {
+        return WeatherRepository(weatherAPI, context, constants)
     }
 }

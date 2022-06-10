@@ -18,6 +18,8 @@ import com.simoneventrici.feedly.presentation.crypto.components.FavouriteCryptoC
 import com.simoneventrici.feedly.presentation.explore.ExploreScreen
 import com.simoneventrici.feedly.presentation.home.HomeScreen
 import com.simoneventrici.feedly.presentation.profile.ProfileScreen
+import com.simoneventrici.feedly.presentation.weather.WeatherScreen
+import com.simoneventrici.feedly.presentation.weather.WeatherViewModel
 import com.simoneventrici.feedly.ui.theme.LighterGray
 import com.simoneventrici.feedly.ui.theme.LighterGrayNavBar
 
@@ -58,6 +60,7 @@ fun Navigator(
     controller: NavHostController
 ) {
     val cryptoViewModel: CryptoViewModel = hiltViewModel()
+    val weatherViewModel: WeatherViewModel = hiltViewModel()
     val userFavouritesCrypto = cryptoViewModel.favouritesCrypto.value.data?.map { it.ticker } ?: emptyList()
 
     NavHost(navController = controller, startDestination = Screen.ExploreScreen.route) {
@@ -65,7 +68,7 @@ fun Navigator(
             ExploreScreen()
         }
         composable(route = Screen.HomeScreen.route) {
-            HomeScreen(controller)
+            HomeScreen(navController = controller, currentWeatherInfo = weatherViewModel.currentWeatherStatus.value.data?.currentWeather)
         }
         composable(route = Screen.ProfileScreen.route) {
             ProfileScreen()
@@ -79,6 +82,9 @@ fun Navigator(
                 cryptoViewModel,
                 allCryptos = cryptoViewModel.allCryptos.value.filter { !userFavouritesCrypto.contains(it.ticker) },
                 navController = controller)
+        }
+        composable(route = Screen.WeatherScreen.route) {
+            WeatherScreen(weatherViewModel, controller)
         }
     }
 }

@@ -84,7 +84,7 @@ fun ContentCard(
 fun TopicChooser(
     navController: NavController,
     content: List<ContentHolder> = listOf(
-        ContentHolder(R.drawable.weather_background, "Weather", {}),
+        ContentHolder(R.drawable.weather_background, "Weather") { navController.navigate(Screen.WeatherScreen.route)},
         ContentHolder(R.drawable.soccer_background, "Soccer", {}),
         ContentHolder(R.drawable.finance_background, "Finance", {}),
         ContentHolder(R.drawable.crypto_background, "Crypto") { navController.navigate(Screen.CryptoScreen.route) }

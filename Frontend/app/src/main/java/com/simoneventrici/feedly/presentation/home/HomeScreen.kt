@@ -23,6 +23,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.commons.getSystemStatusbarHeightInDp
+import com.simoneventrici.feedly.model.WeatherIconParser
+import com.simoneventrici.feedly.model.WeatherInfo
 import com.simoneventrici.feedly.presentation.explore.components.ScrollableTopBar
 import com.simoneventrici.feedly.presentation.home.components.ActivityItemRow
 import com.simoneventrici.feedly.presentation.home.components.TopicChooser
@@ -30,6 +32,7 @@ import com.simoneventrici.feedly.presentation.navigation.PageSwiper
 import com.simoneventrici.feedly.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 fun getWelcomeText(context: Context): String {
     val currentTime: String = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
@@ -47,7 +50,8 @@ fun getWelcomeText(context: Context): String {
 @Composable
 fun HomeScreen(
     navController: NavController,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    currentWeatherInfo: WeatherInfo?,
+    homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
 
     val recentActivity = homeViewModel.recentActivity.value
@@ -99,12 +103,12 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.weather_02d),
+                        painter = painterResource(id = WeatherIconParser.parse(currentWeatherInfo?.weatherIconCode ?: "00").res_id),
                         contentDescription = "Current weather icon",
                         modifier = Modifier.size(28.dp)
                     )
                     Text(
-                        text = "28 °C",
+                        text = currentWeatherInfo?.temperature?.roundToInt()?.toString()?.plus("° C") ?: "--",
                         color = WhiteDark1,
                         fontSize = 18.sp,
                     )

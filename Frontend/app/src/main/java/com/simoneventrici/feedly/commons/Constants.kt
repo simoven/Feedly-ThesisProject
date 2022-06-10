@@ -10,9 +10,14 @@ class Constants(
         const val FEEDLY_BACKEND_URL = "http://192.168.1.14:8080"
         const val COINRANKING_URL = "https://api.coinranking.com/v2/"
         const val COINGECKO_URL = "https://api.coingecko.com/api/v3/"
+        const val WEATHER_API_URL = "https://api.openweathermap.org/data/3.0/"
+        const val POSITIONSTACK_URL = "http://api.positionstack.com/v1/"
+
         // only for test purposes
         const val TEST_TOKEN = "sOceJk56q9xuPyR9OYjIah9fGK-3goWb-VR4LZDH"
     }
 
-    val coinrankingApiKey = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA).metaData["coinrankingKey"]
+    val coinrankingApiKey = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA).metaData["coinrankingApiKey"]
+    val weatherApiKey = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA).metaData["weatherApiKey"]
+    val positionStackApiKey = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA).metaData["positionStackApiKey"]
 }

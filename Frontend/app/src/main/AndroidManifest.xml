@@ -27,8 +27,16 @@
         </activity>
 
         <meta-data
-            android:name = "coinrankingKey"
+            android:name = "coinrankingApiKey"
             android:value = "${COINRANKING_KEY}"
+            />
+        <meta-data
+            android:name = "weatherApiKey"
+            android:value = "${WEATHER_KEY}"
+            />
+        <meta-data
+            android:name = "positionStackApiKey"
+            android:value = "${POSITIONSTACK_KEY}"
             />
     </application>
 
