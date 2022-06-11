@@ -23,7 +23,6 @@ class GeoLocalizationRepository(
         try {
             emit(DataState.Loading<List<GeoLocalizationInfo>>())
             val res = positionStackAPI.getLocalizationInfoFromAddress(constants.positionStackApiKey as String, address).geoData.map { it.toGeolocalizationInfo() }
-            println(res)
             emit(DataState.Success(res))
         } catch(e: HttpException) {
             emit(DataState.Error<List<GeoLocalizationInfo>>(e.localizedMessage ?: context.getString(R.string.unexpected_error_msg)))

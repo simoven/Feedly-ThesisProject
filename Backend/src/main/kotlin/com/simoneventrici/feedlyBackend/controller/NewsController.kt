@@ -73,18 +73,11 @@ class NewsController(
         val emoji = Emoji.Loader.load(emojiStr)
 
         // restituisco le reazioni aggiornate
-        val allReactions =  newsService.addReactionToNews(newsId, user, emoji)
+        val allReactions = newsService.addReactionToNews(newsId, user, emoji)
         return JSONObject().apply {
             put("news_id", newsId)
             put("news_reactions", allReactions.newsReactions)
             put("user_reactions", allReactions.userReaction ?: "")
         }
-    }
-
-    @GetMapping("newsByKeyword")
-    fun getNewsByKeyword(
-        @RequestParam keyword: String
-    ): Collection<News> {
-      return newsService.getAllCurrentNewsByKeyword(keyword)
     }
 }

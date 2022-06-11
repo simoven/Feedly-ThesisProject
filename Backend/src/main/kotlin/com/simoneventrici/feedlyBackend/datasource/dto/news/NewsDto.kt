@@ -22,7 +22,6 @@ data class NewsDto(
             sourceId = source.id ?: "No source id",
             sourceName = source.name ?: "No source",
             publishedDate = publishedAt ?: "No date",
-            keyword = keyword,
             category = if(category != null) News.Category.parse(category) else null
         )
     }

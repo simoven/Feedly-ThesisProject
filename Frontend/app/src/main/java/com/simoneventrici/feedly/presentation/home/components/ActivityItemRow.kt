@@ -92,6 +92,7 @@ fun ActivityItemRow(
 
                 // se l'attività recente è di tipo news reaction, allora mi serve l'immagine per l'emoji
                 if (activity.activityType is RecentActivity.ActivityType.NewsReaction) {
+                    Spacer(Modifier.width(4.dp))
                     Image(
                         painter = painterResource(
                             Emoji.Loader.load(activity.activityParam2 ?: "").res_id
@@ -99,6 +100,7 @@ fun ActivityItemRow(
                         modifier = Modifier.size(32.dp),
                         contentDescription = "Emoji of reaction"
                     )
+                    Spacer(Modifier.width(4.dp))
                 } else { // altrimenti basta del testo semplice
                     Text(
                         text = activity.activityParam1,

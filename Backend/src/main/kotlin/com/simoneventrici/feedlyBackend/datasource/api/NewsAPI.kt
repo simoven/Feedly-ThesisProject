@@ -16,12 +16,6 @@ class NewsAPI(
 ) {
     private val BASE_URL = "https://newsapi.org/v2/"
 
-    companion object {
-        val SORT_POPULARITY = "popularity"
-        val SORT_RELEVANCY = "relevancy"
-        val SORT_NEWEST = "publishedAt"
-    }
-
     private fun getUrl(path: String, category: String? = null, country: String? = null, language: String? = null,
                        keyword: String? = null, sortBy: String? = null, pageSize: String = "20"): String {
         val keywordPath = if(keyword != null) "&q=$keyword" else ""
@@ -42,17 +36,4 @@ class NewsAPI(
             )
         )
     }
-
-    fun getNewsByKeyword(keyword: String, language: String, sortBy: String): ResponseEntity<NewsListDto> {
-        return restTemplate.getForEntity(
-            getUrl(
-                path = "everything",
-                keyword = keyword,
-                language = language,
-                sortBy = sortBy,
-                pageSize = "30"
-            )
-        )
-    }
-
 }

@@ -13,7 +13,6 @@ data class News(
     @JsonProperty("source_name") val sourceName: String,
     @JsonProperty("source_id") val sourceId: String,
     @JsonProperty("published_date") val publishedDate: String,
-    val keyword: String? = null,
     val category: Category?,
     var language: String = "en"
 ) {

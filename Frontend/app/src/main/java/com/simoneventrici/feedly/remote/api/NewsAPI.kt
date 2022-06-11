@@ -21,9 +21,4 @@ interface NewsAPI {
         @Header("Authorization") authToken: String,
         @Body body: RequestBody
     ): Response<ResponseBody>
-
-    @GET("newsByKeyword")
-    suspend fun getNewsByKeyword(
-        @Query("keyword") keyword: String
-    ): List<NewsDto>
 }

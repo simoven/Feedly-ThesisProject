@@ -4,15 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -24,11 +26,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
+import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.commons.Constants
 import com.simoneventrici.feedly.commons.DataState
 import com.simoneventrici.feedly.commons.getSystemStatusbarHeightInDp
+import com.simoneventrici.feedly.model.Emoji
 import com.simoneventrici.feedly.model.primitives.NewsCategory
 import com.simoneventrici.feedly.presentation.components.shimmerEffectLoader
 import com.simoneventrici.feedly.presentation.explore.components.NewsCard
@@ -38,8 +43,6 @@ import com.simoneventrici.feedly.presentation.navigation.PageSwiper
 import com.simoneventrici.feedly.ui.theme.DarkGreen
 import com.simoneventrici.feedly.ui.theme.LighterBlack
 import com.simoneventrici.feedly.ui.theme.WhiteDark1
-import com.simoneventrici.feedly.R
-import com.simoneventrici.feedly.model.Emoji
 
 // questa classe contiene la pagina da dare allo swiper per ogni categoria di notizia
 // la uso per evitare di ricomporre ogni volta la stessa pagina, controllando se lo stato era già success
@@ -57,10 +60,10 @@ data class PageState(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ExploreScreen(
-    newsViewModel: ExploreViewModel = hiltViewModel()
+    newsViewModel: ExploreViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val newsByCategoryState = newsViewModel.currentNewsByCategory
-    //val newsByKeywordState = newsViewModel.currentNewsByKeyword
 
     val pagerState = rememberPagerState()
     val allCategory = NewsCategory.getAll()
@@ -221,7 +224,7 @@ fun ExploreScreen(
         .background(Color.Transparent)
         .padding(top = getSystemStatusbarHeightInDp(LocalContext.current).dp)
     ) {
-        ScrollableTopBar(scrollUpState)
+        ScrollableTopBar(scrollUpState, navController)
 
         // passo tutte le pagine allo swiper, che le renderizzerà in base alla tab attiva
         PageSwiper(

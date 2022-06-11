@@ -15,7 +15,6 @@ data class NewsDto(
     @SerializedName("source_name") val sourceName: String,
     @SerializedName("source_id") val sourceId: String,
     @SerializedName("published_date") val publishedDate: String,
-    val keyword: String?,
     val category: CategoryDto?,
     val language: String = "en"
 ) {
@@ -30,7 +29,6 @@ data class NewsDto(
             sourceName = sourceName,
             sourceId = sourceId,
             publishedDate = publishedDate,
-            keyword = keyword,
             category = category?.let { NewsCategory.parse(it.value) },
             language = language
         )

@@ -22,9 +22,8 @@ class ExploreViewModel @Inject constructor(
     private val newsRepository: NewsRepository
 ): ViewModel() {
 
-    // contengono tutti i dati relativi alle ntozie, se sono stati fetchati, se ci sono stati errori ecc
+    // contengono tutti i dati relativi alle notizie, se sono stati fetchate, se ci sono stati errori ecc
     val currentNewsByCategory = mutableStateOf<Map<String, DataState<List<NewsAndReactions>>>>(emptyMap())
-    val currentNewsByKeyword = mutableStateOf<DataState<List<News>>>(DataState.None())
 
     // questa mappa contiene, per ogni categoria di notizie, l'ultima notizia per cui è servito un aggiornamento
     // delle reaction in seguito all'inserimento da parte dell'utente di una reaction
@@ -52,18 +51,21 @@ class ExploreViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getNewsByKeyword(keyword: String) {
-        newsRepository.getNewsByKeyword(
-            keyword = keyword
-        ).onEach {
-            currentNewsByKeyword.value = it
-        }.launchIn(viewModelScope)
-    }
-
     private fun getNewsInMap(newsId: Int, category: String): NewsAndReactions? {
         return currentNewsByCategory.value[category]?.data?.firstOrNull() {
             it.news.id == newsId
         }
+    }
+
+    fun getAllNews(): List<NewsAndReactions> {
+        // è una lista di liste contententi tutte le news per categoria
+        val allNewsByCategory = currentNewsByCategory.value.values.map { it.data }
+        // [0] -> list di general, [1] -> list di business ecc
+        val allNewsList = mutableListOf<NewsAndReactions>()
+        allNewsByCategory.forEach {
+            allNewsList.addAll(it ?: emptyList())
+        }
+        return allNewsList
     }
 
     fun addReactionToNews(category: String, newsId: Int, emoji: Emoji, authToken: String ) {

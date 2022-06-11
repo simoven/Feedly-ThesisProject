@@ -32,10 +32,6 @@ class ScheduledService(
         delay(4000)
         while(coroutineContext.isActive) {
             kotlin.runCatching {
-                println("${dateFormat.format(Date())} REQUESTING Fetch News by keyword")
-                //newsService.fetchAllNewsByKeyword()
-                println("${dateFormat.format(Date())} FETCHED News by keyword")
-
                 /*println("${dateFormat.format(Date())} REQUESTING Fetch News by category")
                 newsService.fetchAllNewsByCategory()
                 println("${dateFormat.format(Date())} FETCHED News by category")*/

@@ -2,6 +2,7 @@ package com.simoneventrici.feedly.presentation.explore.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -14,12 +15,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.simoneventrici.feedly.R
+import com.simoneventrici.feedly.presentation.navigation.Screen
 import com.simoneventrici.feedly.ui.theme.WhiteColor
 
 @Composable
 fun ScrollableTopBar(
-    scrollUpState: State<Boolean?>
+    scrollUpState: State<Boolean?>,
+    navController: NavController
 ) {
     val position by animateFloatAsState(if (scrollUpState.value == true) -150f else 0f)
 
@@ -40,7 +44,7 @@ fun ScrollableTopBar(
             Image(
                 contentDescription = "Search icon",
                 painter = painterResource(id = R.drawable.search_unchecked),
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(28.dp).clickable { navController.navigate(Screen.NewsSearchScreen.route) }
             )
         }
     }

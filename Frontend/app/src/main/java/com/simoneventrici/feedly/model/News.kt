@@ -12,7 +12,6 @@ data class News(
     val sourceName: String,
     val sourceId: String,
     val publishedDate: String,
-    val keyword: String?,
     val category: NewsCategory?,
     val language: String = "en",
 )

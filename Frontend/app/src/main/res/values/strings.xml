@@ -37,4 +37,10 @@
     <string name="search_city">Search city</string>
     <string name="clear">Clear</string>
     <string name="searching">Searching</string>
+    <string name="no_place_setup">Set your position to receive weather info</string>
+    <string name="set_up">Set up</string>
+    <string name="close">Close</string>
+    <string name="in_keywords">in keywords</string>
+    <string name="in_sources">in sources</string>
+    <string name="search_by_keyword_source">Search by keyword or source</string>
 </resources>

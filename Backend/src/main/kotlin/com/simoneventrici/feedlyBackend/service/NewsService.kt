@@ -17,19 +17,12 @@ class NewsService(
     private val newsDao: NewsDao
 ) {
 
-    // ogni fetch delle notizie richiede 7*2 + 13 = 27 API calls
+    // ogni fetch delle notizie richiede 7*2 = 14 API calls
     // limite giornaliero attuale = 100
 
     // le notizie per categoria vengono fetchate e salvate nel database
-    // quelle per keyword no, vengono caricate all'avvio del backend e tenute in memoria
-    // vengono poi aggiornate ogni tot ore insieme a quelle per categoria
+    // vengono poi aggiornate ogni tot ore
 
-    val allKeywords = listOf(
-        "elezioni", "sondaggi", "partiti",
-        "ai", "robot", "spazio", "coding",
-        "calcio", "basket", "tennis", "pallavolo",
-        "gossip", "spettacolo",
-    )
     private val allCategories = listOf(
         Category.Business(),
         Category.General(),
@@ -40,7 +33,6 @@ class NewsService(
         Category.Technology())
 
     private val newsByCategory: MutableMap<String, MutableCollection<News>> = mutableMapOf()
-    private val newsByKeyword: MutableMap<String, MutableCollection<News>> = mutableMapOf()
 
     init {
         //Carico tutte le notizie dal database e le divido per categoria
@@ -64,14 +56,6 @@ class NewsService(
         }
     }
 
-    suspend fun fetchAllNewsByKeyword() {
-        allKeywords.forEach { keyword ->
-            val itNews = newsDataSource.getNewsByKeyword(keyword, "it", NewsAPI.SORT_RELEVANCY)
-            newsByKeyword[keyword]?.addAll(itNews.data ?: emptyList())
-            newsByKeyword[keyword]?.distinctBy { it.newsUrl }
-        }
-    }
-
     // restituisco le notizie già fetchate in precedenza
     fun getAllCurrentNewsByCategory(category: Category, language: String, user: User): Collection<NewsAndReactionsDto> {
         return newsByCategory[category.value]
@@ -83,11 +67,6 @@ class NewsService(
                 val reactions = newsDao.getNewsReactions(it.getId(), user)
                 NewsAndReactionsDto(news = it, reactions = reactions.newsReactions, userReaction = reactions.userReaction)
             } ?: emptyList()
-    }
-
-    // le notizie per keyword sono solo in italiano
-    fun getAllCurrentNewsByKeyword(keyword: String): Collection<News> {
-        return newsByKeyword[keyword]?.sortedBy { it.publishedDate }?.reversed() ?: emptyList()
     }
 
     fun addReactionToNews(newsId: Int, user: User, emoji: Emoji): ReactionsDto {

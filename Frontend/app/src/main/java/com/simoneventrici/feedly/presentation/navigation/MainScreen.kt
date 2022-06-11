@@ -16,6 +16,8 @@ import com.simoneventrici.feedly.presentation.crypto.CryptoScreen
 import com.simoneventrici.feedly.presentation.crypto.CryptoViewModel
 import com.simoneventrici.feedly.presentation.crypto.components.FavouriteCryptoChooser
 import com.simoneventrici.feedly.presentation.explore.ExploreScreen
+import com.simoneventrici.feedly.presentation.explore.ExploreViewModel
+import com.simoneventrici.feedly.presentation.explore.components.SearchNewsPage
 import com.simoneventrici.feedly.presentation.home.HomeScreen
 import com.simoneventrici.feedly.presentation.profile.ProfileScreen
 import com.simoneventrici.feedly.presentation.weather.WeatherScreen
@@ -60,13 +62,14 @@ fun MainScreen() {
 fun Navigator(
     controller: NavHostController
 ) {
+    val exploreViewModel: ExploreViewModel = hiltViewModel()
     val cryptoViewModel: CryptoViewModel = hiltViewModel()
     val weatherViewModel: WeatherViewModel = hiltViewModel()
     val userFavouritesCrypto = cryptoViewModel.favouritesCrypto.value.data?.map { it.ticker } ?: emptyList()
 
     NavHost(navController = controller, startDestination = Screen.ExploreScreen.route) {
         composable(route = Screen.ExploreScreen.route) {
-            ExploreScreen()
+            ExploreScreen(exploreViewModel, navController = controller)
         }
         composable(route = Screen.HomeScreen.route) {
             HomeScreen(navController = controller, currentWeatherInfo = weatherViewModel.currentWeatherStatus.value.data?.currentWeather)
@@ -89,6 +92,9 @@ fun Navigator(
         }
         composable(route = Screen.CityChooserScreen.route) {
             CityChooserScreen(navController = controller, weatherViewModel = weatherViewModel)
+        }
+        composable(route = Screen.NewsSearchScreen.route) {
+            SearchNewsPage(exploreViewModel = exploreViewModel, navController = controller)
         }
     }
 }

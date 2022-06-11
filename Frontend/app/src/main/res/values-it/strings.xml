@@ -38,4 +38,8 @@
     <string name="search_city">Cerca città</string>
     <string name="clear">Pulisci</string>
     <string name="searching">Sto cercando</string>
+    <string name="no_place_setup">Imposta la tua posizione per ricevere info sul meteo</string>
+    <string name="set_up">Imposta</string>
+    <string name="close">Close</string>
+    <string name="search_by_keyword_source">Search by keyword or source</string>
 </resources>
