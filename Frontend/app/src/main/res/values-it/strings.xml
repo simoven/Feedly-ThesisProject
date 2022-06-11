@@ -40,6 +40,8 @@
     <string name="searching">Sto cercando</string>
     <string name="no_place_setup">Imposta la tua posizione per ricevere info sul meteo</string>
     <string name="set_up">Imposta</string>
-    <string name="close">Close</string>
-    <string name="search_by_keyword_source">Search by keyword or source</string>
+    <string name="close">Chiudi</string>
+    <string name="in_keywords">nelle keyword</string>
+    <string name="in_sources">nelle fonti</string>
+    <string name="search_by_keyword_source">Cerca per keyword o fonte</string>
 </resources>
