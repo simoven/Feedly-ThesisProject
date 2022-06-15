@@ -1,11 +1,12 @@
 package com.simoneventrici.feedlyBackend.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.sql.ResultSet
 
 data class SoccerTeam(
     val teamId: Int,
     val name: String,
-    var playsInLeagueInYear: Map<Int, SoccerLeague> = emptyMap()
+    @JsonIgnore var playsInLeagueInYear: Map<Int, SoccerLeague> = emptyMap()
 ) {
 
     companion object {

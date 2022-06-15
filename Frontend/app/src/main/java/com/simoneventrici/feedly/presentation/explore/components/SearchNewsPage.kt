@@ -93,6 +93,7 @@ fun SearchNewsPage(
 ) {
     val newsQueryText = remember { mutableStateOf("") }
     val searchBoxOpen = remember { mutableStateOf(false) }
+
     // prendo la lista di tutte le notizie, e la cambio se cambia il numero di state success, ovvero se ci sono altre notizie appena fetchate
     val allNewsList = remember(exploreViewModel.currentNewsByCategory.value.values.map { it is DataState.Success }.size) { exploreViewModel.getAllNews() }
     val queryedNews = remember { mutableStateOf<List<NewsAndReactions>>(emptyList()) }

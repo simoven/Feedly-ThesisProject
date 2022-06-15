@@ -1,6 +1,7 @@
 package com.simoneventrici.feedlyBackend.datasource.dao
 
 import com.simoneventrici.feedlyBackend.model.SoccerLeague
+import com.simoneventrici.feedlyBackend.model.SoccerTeam
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.*
 import org.springframework.stereotype.Repository
@@ -14,6 +15,7 @@ class SoccerLeagueDao(
     private val getAllQuery = "select * from soccer_league"
     private val getLeaguePlayedByTeamQuery = "select * from team_plays_in_league where team_id=?"
     private val saveQuery = "insert into soccer_league values(?,?,?)"
+    private val saveTeamPlaysInLeagueQuery = "insert into team_plays_in_league values(?,?,?) on conflict do nothing"
 
     override fun getAll(): List<SoccerLeague> {
         val list = mutableListOf<SoccerLeague>()
@@ -40,6 +42,15 @@ class SoccerLeagueDao(
             rs.close()
         }
         return map
+    }
+
+    fun saveTeamPlaysInLeague(team: SoccerTeam, league: SoccerLeague, year: Int) {
+        jdbcTemplate.execute(saveTeamPlaysInLeagueQuery) {
+            it.setInt(1, team.teamId)
+            it.setInt(2, league.leagueId)
+            it.setInt(3, year)
+            it.execute()
+        }
     }
 
     override fun save(elem: SoccerLeague) {

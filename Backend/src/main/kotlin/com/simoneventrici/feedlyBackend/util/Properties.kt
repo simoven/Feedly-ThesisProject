@@ -11,9 +11,4 @@ class Properties {
 
     @Value("\${api.football.key}")
     lateinit var footballApiKey: String
-
-    @Value("\${api.weather.key}")
-    lateinit var weatherApiKey: String
-
-
 }
