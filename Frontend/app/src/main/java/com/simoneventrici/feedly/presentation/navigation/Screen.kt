@@ -10,4 +10,5 @@ sealed class Screen(val route: String) {
     object CityChooserScreen: Screen("city_chooser")
     object NewsSearchScreen: Screen("news_search")
     object SoccerScreen: Screen("soccer")
+    object ManageSoccerTeamsScreen: Screen("manage_soccer_teams")
 }

@@ -1,11 +1,8 @@
 package com.simoneventrici.feedly.presentation.soccer.components
 
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,11 +18,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.commons.DataState
 import com.simoneventrici.feedly.model.TeamMatch
 import com.simoneventrici.feedly.presentation.components.ShimmerEffectLoader
+import com.simoneventrici.feedly.presentation.navigation.Screen
 import com.simoneventrici.feedly.presentation.soccer.SoccerViewModel
 import com.simoneventrici.feedly.ui.theme.LighterBlack
 import com.simoneventrici.feedly.ui.theme.MainGreen
@@ -44,7 +43,8 @@ fun TeamLogoImage(imageUrl: String) {
 @Composable
 fun FavouriteTeamMatchesSection(
     soccerViewModel: SoccerViewModel,
-    teamMatches: DataState<List<TeamMatch>>
+    teamMatches: DataState<List<TeamMatch>>,
+    navController: NavController
 ) {
     val scrollUpState = soccerViewModel.scrollUp.observeAsState()
     val heightInDp = with(LocalDensity.current) {
@@ -52,19 +52,20 @@ fun FavouriteTeamMatchesSection(
     }
     val height by animateDpAsState(targetValue = if(scrollUpState.value == true) 0.dp else heightInDp)
 
+    // questo modifier si riduce per far scrollare il componennte che sta in basso, ovvero la classifica
     val modifier = if(soccerViewModel.matchesBoxHeight.value == 0) {
         Modifier.onGloballyPositioned { soccerViewModel.matchesBoxHeight.value = it.size.height }
     } else
         Modifier.height(height)
 
     Box(
-        Modifier
+        modifier
             .fillMaxWidth()
             .fillMaxHeight(.75f),
         contentAlignment = Alignment.BottomCenter
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp)
         ) {
@@ -81,7 +82,8 @@ fun FavouriteTeamMatchesSection(
                 Text(
                     text = LocalContext.current.getString(R.string.manage_teams),
                     color = MainGreen,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    modifier = Modifier.clickable { navController.navigate(Screen.ManageSoccerTeamsScreen.route) }
                 )
             }
 

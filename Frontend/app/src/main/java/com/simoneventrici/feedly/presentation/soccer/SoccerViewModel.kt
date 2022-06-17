@@ -38,7 +38,6 @@ class SoccerViewModel @Inject constructor(
         getAllTeams()
         getUserFavouriteTeams()
         getCurrentStandings()
-        getUserFavouriteTeamsMatches()
     }
 
     private fun getAllTeams() {
@@ -50,6 +49,7 @@ class SoccerViewModel @Inject constructor(
     private fun getUserFavouriteTeams() {
         viewModelScope.launch {
             userFavouriteTeams.value = soccerRepository.getUserFavouriteTeams(Constants.TEST_TOKEN)
+            getUserFavouriteTeamsMatches()
         }
     }
 
@@ -59,10 +59,17 @@ class SoccerViewModel @Inject constructor(
         }
     }
 
+    fun setUserFavouritesTeams(teamIds: List<Int>) {
+        viewModelScope.launch {
+            if(soccerRepository.setUserFavouriteTeams(Constants.TEST_TOKEN, teamIds)) {
+                getUserFavouriteTeams()
+            }
+        }
+    }
+
     fun getUserFavouriteTeamsMatches() {
         soccerRepository.getUserFavouriteTeamMatches(Constants.TEST_TOKEN).onEach {
             userFavouriteTeamsMatches.value = it
-            delay(5000)
         }.launchIn(viewModelScope)
     }
 

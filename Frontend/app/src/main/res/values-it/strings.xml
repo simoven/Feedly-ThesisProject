@@ -49,4 +49,5 @@
     <string name="manage_teams">Gestisci squadre</string>
     <string name="standings">Classifica</string>
     <string name="change_league">Cambia lega</string>
+    <string name="manage_favourite_teams">Gestisci squadre preferite</string>
 </resources>

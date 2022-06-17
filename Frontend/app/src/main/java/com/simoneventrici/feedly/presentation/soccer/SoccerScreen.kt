@@ -33,7 +33,7 @@ fun SoccerScreen(
         TopBar(navController = navController)
 
         Spacer(modifier = Modifier.height(15.dp))
-        FavouriteTeamMatchesSection(soccerViewModel = soccerViewModel, teamMatches = favTeamMatches)
+        FavouriteTeamMatchesSection(soccerViewModel = soccerViewModel, teamMatches = favTeamMatches, navController = navController)
 
         Spacer(modifier = Modifier.height(15.dp))
         StandingsComponent(soccerViewModel = soccerViewModel, standings = currentStandings)

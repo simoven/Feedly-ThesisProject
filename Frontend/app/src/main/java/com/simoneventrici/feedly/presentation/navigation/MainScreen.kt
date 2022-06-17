@@ -21,6 +21,8 @@ import com.simoneventrici.feedly.presentation.explore.components.SearchNewsPage
 import com.simoneventrici.feedly.presentation.home.HomeScreen
 import com.simoneventrici.feedly.presentation.profile.ProfileScreen
 import com.simoneventrici.feedly.presentation.soccer.SoccerScreen
+import com.simoneventrici.feedly.presentation.soccer.SoccerViewModel
+import com.simoneventrici.feedly.presentation.soccer.components.ManageTeamsScreen
 import com.simoneventrici.feedly.presentation.weather.WeatherScreen
 import com.simoneventrici.feedly.presentation.weather.WeatherViewModel
 import com.simoneventrici.feedly.presentation.weather.components.CityChooserScreen
@@ -67,6 +69,7 @@ fun Navigator(
     val cryptoViewModel: CryptoViewModel = hiltViewModel()
     val weatherViewModel: WeatherViewModel = hiltViewModel()
     val userFavouritesCrypto = cryptoViewModel.favouritesCrypto.value.data?.map { it.ticker } ?: emptyList()
+    val soccerViewModel: SoccerViewModel = hiltViewModel()
 
     NavHost(navController = controller, startDestination = Screen.ExploreScreen.route) {
         composable(route = Screen.ExploreScreen.route) {
@@ -98,7 +101,10 @@ fun Navigator(
             SearchNewsPage(exploreViewModel = exploreViewModel, navController = controller)
         }
         composable(route = Screen.SoccerScreen.route) {
-            SoccerScreen(navController = controller)
+            SoccerScreen(soccerViewModel = soccerViewModel, navController = controller)
+        }
+        composable(route = Screen.ManageSoccerTeamsScreen.route) {
+            ManageTeamsScreen(soccerViewModel = soccerViewModel, navController = controller)
         }
     }
 }

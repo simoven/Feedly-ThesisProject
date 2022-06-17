@@ -55,7 +55,7 @@ class ScheduledService(
             kotlin.runCatching {
                 soccerService.fetchAllTeamMatches()
                 println("${dateFormat.format(Date())} FETCHED Team Matches")
-                soccerService.fetchAllLeaguesStandings()
+                //soccerService.fetchAllLeaguesStandings()
                 println("${dateFormat.format(Date())} FETCHED League Standings")
             }.onFailure {
                 println("${it::class} : ${it.message}")

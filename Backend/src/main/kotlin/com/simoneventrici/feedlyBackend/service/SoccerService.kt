@@ -57,7 +57,8 @@ class SoccerService(
         val matchList = mutableListOf<TeamMatch>()
 
         favTeams.forEach { teamId -> matchList.addAll(allMatchesByTeamId[teamId] ?: emptyList()) }
-        return matchList.sortedByDescending { it.timestamp }
+        // evito che la stessa partita appaia piu volte, può capitare quando un utente ha come preferite entrambe le squadre
+        return matchList.distinctBy { listOf(it.homeTeamId, it.awayTeamId, it.timestamp) }. sortedByDescending { it.timestamp }
     }
 
     fun fetchAllLeaguesStandings() {

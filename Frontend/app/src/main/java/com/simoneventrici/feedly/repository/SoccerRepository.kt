@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
@@ -59,10 +60,13 @@ class SoccerRepository(
     }
 
     suspend fun setUserFavouriteTeams(authToken: String, favTeams: List<Int>): Boolean {
+        val arr = JSONArray().apply { favTeams.forEach { put(it) } }
         val body = JSONObject().apply {
-            put("teamdIds", favTeams)
+            put("teamIds", arr)
         }
-        val response = soccerAPI.setUserFavouriteTeams(authToken, body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
+        val bodyJson = body.toString().toRequestBody("application/json".toMediaTypeOrNull())
+
+        val response = soccerAPI.setUserFavouriteTeams(authToken, bodyJson)
         return response.isSuccessful
     }
 }
