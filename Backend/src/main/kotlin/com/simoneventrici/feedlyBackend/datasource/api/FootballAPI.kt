@@ -20,7 +20,7 @@ class FootballAPI(
 
     private val BASE_URL = "https://api-football-v1.p.rapidapi.com/v3"
 
-    fun getMatchesByTeamId(teamId: Int, seasonYear: Int, lastMatches: Int = 10): ResponseEntity<MatchFixturesDto?> {
+    fun getMatchesByTeamId(teamId: Int, seasonYear: Int, lastMatches: Int = 5): ResponseEntity<MatchFixturesDto?> {
         val url = "$BASE_URL/fixtures?team=$teamId&season=$seasonYear&last=$lastMatches"
         val headers = HttpHeaders().apply { set("X-RapidAPI-Key", appProperties.footballApiKey) }
         return restTemplate.exchange<MatchFixturesDto?>(url, HttpMethod.GET, HttpEntity<String>(headers))

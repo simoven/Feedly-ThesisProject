@@ -6,6 +6,7 @@ import com.simoneventrici.feedlyBackend.model.SoccerTeam
 import com.simoneventrici.feedlyBackend.model.TeamMatch
 import com.simoneventrici.feedlyBackend.service.SoccerService
 import com.simoneventrici.feedlyBackend.service.UserService
+import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.postgresql.util.PSQLException
 import org.springframework.http.HttpStatus
@@ -37,11 +38,13 @@ class SoccerController(
         return ResponseEntity(JSONObject().apply { put("msg", e.message) }, HttpStatus.FORBIDDEN)
     }
 
-    @GetMapping("matchesByTeamId")
-    fun getMatchesByTeamId(
-        @RequestParam("teamId") teamId: Int
+    @GetMapping("userFavouriteTeamsMatches")
+    fun getUserFavouritesTeamsMatches(
+        @RequestHeader("Authorization") token: String
     ): Collection<TeamMatch> {
-        return soccerService.getMatchesByTeamId(teamId)
+        val user = userService.checkUserToken(token) ?: throw UnauthorizedException(msg = "Invalid token provided")
+
+        return soccerService.getUserFavouriteTeamsMatches(user)
     }
 
     @GetMapping("standingsByLeagueId")
@@ -51,26 +54,23 @@ class SoccerController(
         return soccerService.getStandingsByLeagueId(leagueId)
     }
 
-    @PostMapping("addFavouriteTeam")
-    fun addFavouriteTeam(
+    @PostMapping("setFavouriteTeams")
+    fun setFavouriteTeams(
         @RequestHeader("Authorization") token: String,
         @RequestBody body: JSONObject
     ) {
         val user = userService.checkUserToken(token) ?: throw UnauthorizedException(msg = "Invalid token provided")
-        val teamId = body["teamId"] as Int? ?: throw IllegalStateException("Team id not provided")
+        val teamIds = body["teamIds"] as ArrayList<*>? ?: throw IllegalStateException("Team ids not provided")
+        val idList = mutableListOf<Int>()
+        teamIds.forEach {
+            kotlin.runCatching {
+                idList.add(it as Int)
+            }.onFailure {
+                throw IllegalStateException("Invalid value provided as team id")
+            }
+        }
 
-        soccerService.addUserFavouriteTeam(user, teamId)
-    }
-
-    @PostMapping("removeFavouriteTeam")
-    fun removeFavouriteTeam(
-        @RequestHeader("Authorization") token: String,
-        @RequestBody body: JSONObject
-    ) {
-        val user = userService.checkUserToken(token) ?: throw UnauthorizedException(msg = "Invalid token provided")
-        val teamId = body["teamId"] as Int? ?: throw IllegalStateException("Team id not provided")
-
-        soccerService.removeUserFavouriteTeam(user, teamId)
+        soccerService.setUserFavouriteTeam(user, idList)
     }
 
     @GetMapping("userFavouriteTeams")
@@ -79,6 +79,11 @@ class SoccerController(
     ): List<SoccerTeam> {
         val user = userService.checkUserToken(token) ?: throw UnauthorizedException(msg = "Invalid token provided")
         return soccerService.getUserFavouriteTeam(user)
+    }
+
+    @GetMapping("allTeams")
+    fun getAllTeams(): List<SoccerTeam> {
+        return soccerService.allTeams
     }
 
 }

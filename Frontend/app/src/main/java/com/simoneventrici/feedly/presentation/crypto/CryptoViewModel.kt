@@ -30,6 +30,7 @@ class CryptoViewModel @Inject constructor(
     val allCryptos = mutableStateOf<List<Crypto>>(emptyList())
     val isRefreshing = mutableStateOf(false)
 
+    // è l'altezza in dp del marketStatsBox
     val statsBoxHeight = mutableStateOf(0)
     private val _scrollUp = MutableLiveData(false)
     val scrollUp: LiveData<Boolean>

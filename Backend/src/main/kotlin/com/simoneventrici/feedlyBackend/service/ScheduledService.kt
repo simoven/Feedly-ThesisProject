@@ -23,7 +23,7 @@ class ScheduledService(
 
     init {
         //GlobalScope.launch(Dispatchers.IO) { checkAndFetchNews() }
-        //GlobalScope.launch(Dispatchers.IO) { fetchSoccerData() }
+        GlobalScope.launch(Dispatchers.IO) { fetchSoccerData() }
         GlobalScope.launch(Dispatchers.Default) { removeOldNews() }
     }
 

@@ -35,7 +35,7 @@ import com.simoneventrici.feedly.commons.DataState
 import com.simoneventrici.feedly.commons.getSystemStatusbarHeightInDp
 import com.simoneventrici.feedly.model.Emoji
 import com.simoneventrici.feedly.model.primitives.NewsCategory
-import com.simoneventrici.feedly.presentation.components.shimmerEffectLoader
+import com.simoneventrici.feedly.presentation.components.ShimmerEffectLoader
 import com.simoneventrici.feedly.presentation.explore.components.NewsCard
 import com.simoneventrici.feedly.presentation.explore.components.NewsLoader
 import com.simoneventrici.feedly.presentation.explore.components.ScrollableTopBar
@@ -182,7 +182,7 @@ fun ExploreScreen(
                 is DataState.Loading -> {
                     pagesMap[categoryStr] = PageState(
                         content = @Composable {
-                            shimmerEffectLoader { brush ->
+                            ShimmerEffectLoader { brush ->
                                 Column(
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -194,7 +194,7 @@ fun ExploreScreen(
                                         NewsLoader(brush = brush)
                                     }
                                 }
-                            }.invoke()
+                            }
                         },
                         state = PageState.LoadingState.Loading
                     )

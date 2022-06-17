@@ -17,7 +17,7 @@ class SoccerTeamDao(
     private val getAllQuery = "select * from soccer_team"
     private val saveQuery = "insert into soccer_team values(?,?)"
     private val saveUserFavouriteTeamQuery = "insert  into user_like_soccer_team values(?,?) on conflict do nothing"
-    private val removeUserFavouriteTeamQuery = "delete from user_like_soccer_team where \"user\"=? and team=?"
+    private val removeAllUserFavouriteTeamQuery = "delete from user_like_soccer_team where \"user\"=?"
     private val userFavouriteTeamsQuery = "select * from user_like_soccer_team where \"user\"=?"
 
     override fun getAll(): List<SoccerTeam> {
@@ -47,19 +47,20 @@ class SoccerTeamDao(
         return list
     }
 
-    fun saveFavouriteTeam(user: User, teamId: Int) {
-        jdbcTemplate.execute(saveUserFavouriteTeamQuery) {
+    fun setFavouriteTeams(user: User, teamIds: List<Int>) {
+        // prima rimuovo tutti i team preferiti dall'utente
+        jdbcTemplate.execute(removeAllUserFavouriteTeamQuery) {
             it.setString(1, user.getUsername())
-            it.setInt(2, teamId)
             it.execute()
         }
-    }
 
-    fun removeFavouriteTeam(user: User, teamId: Int) {
-        jdbcTemplate.execute(removeUserFavouriteTeamQuery) {
-            it.setString(1, user.getUsername())
-            it.setInt(2, teamId)
-            it.execute()
+        // dopo inserisco i nuovi
+        teamIds.forEach { id ->
+            jdbcTemplate.execute(saveUserFavouriteTeamQuery) {
+                it.setString(1, user.getUsername())
+                it.setInt(2, id)
+                it.execute()
+            }
         }
     }
 }

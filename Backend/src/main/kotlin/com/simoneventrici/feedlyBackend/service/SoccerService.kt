@@ -37,27 +37,33 @@ class SoccerService(
         return allStandingsByLeagueId[leagueId] ?: emptyList()
     }
 
-    fun addUserFavouriteTeam(user: User, teamId: Int) {
-        soccerTeamDao.saveFavouriteTeam(user, teamId)
-    }
-
-    fun removeUserFavouriteTeam(user: User, teamId: Int) {
-        soccerTeamDao.removeFavouriteTeam(user, teamId)
+    fun setUserFavouriteTeam(user: User, teamIds: List<Int>) {
+        soccerTeamDao.setFavouriteTeams(user, teamIds)
     }
 
     fun fetchAllTeamMatches() {
         // per ogni team che gioca in serie A, fetcho la lista degli ultimi incontri e rimane salvata
-        allTeams.filter { it.playsInLeagueInYear[currentYear]?.leagueId == 135 }.forEach { team ->
-            val result = footballAPI.getMatchesByTeamId(team.teamId, currentYear)
+        val tempTeams = listOf(489, 505, 499)
+        /*allTeams.filter { it.playsInLeagueInYear[currentYear]?.leagueId == 135 }*/tempTeams.forEach { team ->
+            val result = footballAPI.getMatchesByTeamId(team, currentYear)
             result.body?.let {
-                allMatchesByTeamId[team.teamId] = it.response.map { resp -> resp.toTeamMatch() }
+                allMatchesByTeamId[team] = it.response.map { resp -> resp.toTeamMatch() }
             }
         }
     }
 
+    fun getUserFavouriteTeamsMatches(user: User): List<TeamMatch> {
+        val favTeams = soccerTeamDao.getUserFavouriteTeams(user)
+        val matchList = mutableListOf<TeamMatch>()
+
+        favTeams.forEach { teamId -> matchList.addAll(allMatchesByTeamId[teamId] ?: emptyList()) }
+        return matchList.sortedByDescending { it.timestamp }
+    }
+
     fun fetchAllLeaguesStandings() {
         // per ogni lega, fetcho la classifica attuale
-        allLeagues.forEach { league ->
+        //allLeagues.forEach { league ->
+        listOf(SoccerLeague(135, "", "")).forEach { league ->
             val result = footballAPI.getStandingsByLeagueId(league.leagueId, currentYear)
             result.body?.let {
                 allStandingsByLeagueId[league.leagueId] = it.response[0].league.standings[0].map { st -> st.toLeagueStanding() }

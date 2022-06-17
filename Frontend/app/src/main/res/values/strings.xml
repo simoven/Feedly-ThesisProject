@@ -43,4 +43,9 @@
     <string name="in_keywords">in keywords</string>
     <string name="in_sources">in sources</string>
     <string name="search_by_keyword_source">Search by keyword or source</string>
+    <string name="soccer">Soccer</string>
+    <string name="latest_matches">Latest matches</string>
+    <string name="manage_teams">Manage teams</string>
+    <string name="standings">Standings</string>
+    <string name="change_league">Change league</string>
 </resources>

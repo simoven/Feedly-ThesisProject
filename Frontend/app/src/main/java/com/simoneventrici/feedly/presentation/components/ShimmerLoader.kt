@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 // Lo shimmerLoader prende come parametro un composable che ha bisogno del brush di caricamento
 // restituisce un nuovo composable che chiama il parametro a cui viene aggiunto il brush
 @Composable
-fun shimmerEffectLoader(Content: @Composable (Brush) -> Unit): @Composable () -> Unit {
+fun ShimmerEffectLoader(Content: @Composable (Brush) -> Unit) {
     val gradient = listOf(
         Color.LightGray.copy(alpha = 0.2f),
         Color.White.copy(alpha = 0.4f),
@@ -37,5 +37,5 @@ fun shimmerEffectLoader(Content: @Composable (Brush) -> Unit): @Composable () ->
         end = Offset(x = translateAnimation.value, y = 50f)
     )
 
-    return { Content(brush) }
+    Content(brush)
 }

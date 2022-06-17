@@ -152,4 +152,23 @@ class AppModule {
     ): WeatherRepository {
         return WeatherRepository(weatherAPI, context, constants)
     }
+
+    @Provides
+    @Singleton
+    fun provideSoccerApi(): SoccerAPI {
+        return Retrofit.Builder()
+            .baseUrl("${Constants.FEEDLY_BACKEND_URL}/soccer/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(SoccerAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSoccerRepository(
+        @ApplicationContext context: Context,
+        soccerAPI: SoccerAPI
+    ): SoccerRepository {
+        return SoccerRepository(soccerAPI, context)
+    }
 }

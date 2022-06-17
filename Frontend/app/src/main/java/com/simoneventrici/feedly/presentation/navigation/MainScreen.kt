@@ -20,6 +20,7 @@ import com.simoneventrici.feedly.presentation.explore.ExploreViewModel
 import com.simoneventrici.feedly.presentation.explore.components.SearchNewsPage
 import com.simoneventrici.feedly.presentation.home.HomeScreen
 import com.simoneventrici.feedly.presentation.profile.ProfileScreen
+import com.simoneventrici.feedly.presentation.soccer.SoccerScreen
 import com.simoneventrici.feedly.presentation.weather.WeatherScreen
 import com.simoneventrici.feedly.presentation.weather.WeatherViewModel
 import com.simoneventrici.feedly.presentation.weather.components.CityChooserScreen
@@ -95,6 +96,9 @@ fun Navigator(
         }
         composable(route = Screen.NewsSearchScreen.route) {
             SearchNewsPage(exploreViewModel = exploreViewModel, navController = controller)
+        }
+        composable(route = Screen.SoccerScreen.route) {
+            SoccerScreen(navController = controller)
         }
     }
 }
