@@ -1,7 +1,8 @@
 # Feedly-ThesisProject
 
 Feedly is a all-in-one aggregator in which an user can find news, weather, statistics about soccer, crypto and finance </br>
-It is being developed as my thesis project
+It is being developed as my thesis project with the following technologies: </br>
+Kotlin, Spring Boot, Android Jetpack and PostgreSQL
 
 # News
 In the news section, different category of news can be found, such as General, Business, Sport and more </br>
