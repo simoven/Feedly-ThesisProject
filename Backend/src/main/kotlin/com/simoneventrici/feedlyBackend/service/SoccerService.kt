@@ -46,7 +46,7 @@ class SoccerService(
         val tempTeams = listOf(489, 505, 499)
         /*allTeams.filter { it.playsInLeagueInYear[currentYear]?.leagueId == 135 }*/tempTeams.forEach { team ->
             val result = footballAPI.getMatchesByTeamId(team, currentYear)
-            result.body?.let {
+            result?.body?.let {
                 allMatchesByTeamId[team] = it.response.map { resp -> resp.toTeamMatch() }
             }
         }
@@ -66,7 +66,7 @@ class SoccerService(
         //allLeagues.forEach { league ->
         listOf(SoccerLeague(135, "", "")).forEach { league ->
             val result = footballAPI.getStandingsByLeagueId(league.leagueId, currentYear)
-            result.body?.let {
+            result?.body?.let {
                 allStandingsByLeagueId[league.leagueId] = it.response[0].league.standings[0].map { st -> st.toLeagueStanding() }
             }
         }

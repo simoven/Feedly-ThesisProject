@@ -30,7 +30,7 @@
     <string name="btc_dominance">BTC Dominance</string>
     <string name="add_new_crypto">"Add new "</string>
     <string name="add_crypto_label">Add crypto</string>
-    <string name="search_crypto">Search crypto...</string>
+    <string name="search_crypto">Search crypto…</string>
     <string name="feels_like">Feels like</string>
     <string name="today">Today</string>
     <string name="wind">Wind</string>
@@ -49,4 +49,8 @@
     <string name="standings">Standings</string>
     <string name="change_league">Change league</string>
     <string name="manage_favourite_teams">Manage favourite teams</string>
+    <string name="stocks">Stocks</string>
+    <string name="favourite_stocks">Your favourites stocks</string>
+    <string name="add_stock_label">Add stocks</string>
+    <string name="search_stock">Search stock</string>
 </resources>

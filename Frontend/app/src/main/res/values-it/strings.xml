@@ -50,4 +50,8 @@
     <string name="standings">Classifica</string>
     <string name="change_league">Cambia lega</string>
     <string name="manage_favourite_teams">Gestisci squadre preferite</string>
+    <string name="stocks">Azioni</string>
+    <string name="favourite_stocks">Le tue azioni preferite</string>
+    <string name="add_stock_label">Aggiungi azioni</string>
+    <string name="search_stock">Cerca azione</string>
 </resources>

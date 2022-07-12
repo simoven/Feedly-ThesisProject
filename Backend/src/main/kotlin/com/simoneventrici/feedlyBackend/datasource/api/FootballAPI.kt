@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Component
 class FootballAPI(
@@ -20,17 +22,31 @@ class FootballAPI(
 
     private val BASE_URL = "https://api-football-v1.p.rapidapi.com/v3"
 
-    fun getMatchesByTeamId(teamId: Int, seasonYear: Int, lastMatches: Int = 5): ResponseEntity<MatchFixturesDto?> {
+    fun getMatchesByTeamId(teamId: Int, seasonYear: Int, lastMatches: Int = 5): ResponseEntity<MatchFixturesDto?>? {
         val url = "$BASE_URL/fixtures?team=$teamId&season=$seasonYear&last=$lastMatches"
         val headers = HttpHeaders().apply { set("X-RapidAPI-Key", appProperties.footballApiKey) }
-        return restTemplate.exchange<MatchFixturesDto?>(url, HttpMethod.GET, HttpEntity<String>(headers))
+
+        var result: ResponseEntity<MatchFixturesDto?>? = null
+        kotlin.runCatching {
+            result = restTemplate.exchange<MatchFixturesDto?>(url, HttpMethod.GET, HttpEntity<String>(headers))
+        }.onFailure {
+            println(SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(Date()) +  it.message)
+        }
+
+        return result
     }
 
-    fun getStandingsByLeagueId(leagueId: Int, seasonYear: Int): ResponseEntity<LeagueStandingsDto?> {
+    fun getStandingsByLeagueId(leagueId: Int, seasonYear: Int): ResponseEntity<LeagueStandingsDto?>? {
         val url = "$BASE_URL/standings?season=$seasonYear&league=$leagueId"
-        println(url)
         val headers = HttpHeaders().apply { set("X-RapidAPI-Key", appProperties.footballApiKey) }
-        return restTemplate.exchange<LeagueStandingsDto?>(url, HttpMethod.GET, HttpEntity<String>(headers))
+
+        var result: ResponseEntity<LeagueStandingsDto?>? = null
+        kotlin.runCatching {
+            result = restTemplate.exchange<LeagueStandingsDto?>(url, HttpMethod.GET, HttpEntity<String>(headers))
+        }.onFailure {
+            println(SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(Date()) +  it.message)
+        }
+        return result
     }
 
 }

@@ -86,7 +86,7 @@ fun TopicChooser(
     content: List<ContentHolder> = listOf(
         ContentHolder(R.drawable.weather_background, "Weather") { navController.navigate(Screen.WeatherScreen.route)},
         ContentHolder(R.drawable.soccer_background, "Soccer") { navController.navigate(Screen.SoccerScreen.route)},
-        ContentHolder(R.drawable.finance_background, "Finance", {}),
+        ContentHolder(R.drawable.finance_background, "Finance") { navController.navigate(Screen.StockScreen.route)},
         ContentHolder(R.drawable.crypto_background, "Crypto") { navController.navigate(Screen.CryptoScreen.route) }
     )
 ) {

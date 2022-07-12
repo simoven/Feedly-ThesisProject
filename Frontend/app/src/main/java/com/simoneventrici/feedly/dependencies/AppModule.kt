@@ -171,4 +171,23 @@ class AppModule {
     ): SoccerRepository {
         return SoccerRepository(soccerAPI, context)
     }
+
+    @Provides
+    @Singleton
+    fun provideFinanceApi(): FinanceAPI {
+        return Retrofit.Builder()
+            .baseUrl("${Constants.FEEDLY_BACKEND_URL}/stocks/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(FinanceAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStocksRepository(
+        @ApplicationContext context: Context,
+        financeAPI: FinanceAPI
+    ): StocksRepository {
+        return StocksRepository(financeAPI, context)
+    }
 }

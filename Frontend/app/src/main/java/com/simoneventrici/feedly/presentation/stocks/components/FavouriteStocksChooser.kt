@@ -1,4 +1,4 @@
-package com.simoneventrici.feedly.presentation.crypto.components
+package com.simoneventrici.feedly.presentation.stocks.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,7 +8,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,21 +19,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.commons.getSystemStatusbarHeightInDp
-import com.simoneventrici.feedly.model.Crypto
-import com.simoneventrici.feedly.presentation.crypto.CryptoViewModel
+import com.simoneventrici.feedly.model.Stock
+import com.simoneventrici.feedly.presentation.stocks.StocksViewModel
 import com.simoneventrici.feedly.ui.theme.*
 
+
 @Composable
-fun ChooseCryptoTopBar(
+fun ChooseStockTopBar(
     navController: NavController,
-    cryptoQueryText: MutableState<String>,
+    stockQueryText: MutableState<String>,
     searchBoxActive: MutableState<Boolean>
 ) {
     Row(
@@ -61,7 +63,7 @@ fun ChooseCryptoTopBar(
             }
             Spacer(modifier = Modifier.width(15.dp))
             Text(
-                text = LocalContext.current.getString(R.string.add_crypto_label),
+                text = LocalContext.current.getString(R.string.add_stock_label),
                 color = WhiteColor,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
@@ -81,14 +83,13 @@ fun ChooseCryptoTopBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(
-                    value = cryptoQueryText.value,
-                    onValueChange = { text -> cryptoQueryText.value = text},
-                    //label = { Text(modifier = Modifier.height(0.dp), text = "")},
+                    value = stockQueryText.value,
+                    onValueChange = { text -> stockQueryText.value = text},
                     placeholder = {
                         Text(
-                            text = LocalContext.current.getString(R.string.search_crypto),
+                            text = LocalContext.current.getString(R.string.search_stock),
                             fontSize = 16.sp,
-                            fontWeight = W500
+                            fontWeight = FontWeight.W500
                         )
                     },
                     modifier = Modifier.weight(1f),
@@ -106,7 +107,7 @@ fun ChooseCryptoTopBar(
                     text = "Cancel",
                     color = MainGreen,
                     fontSize = 16.sp,
-                    modifier = Modifier.clickable { searchBoxActive.value = false; cryptoQueryText.value = "" }
+                    modifier = Modifier.clickable { searchBoxActive.value = false; stockQueryText.value = "" }
                 )
                 Spacer(modifier = Modifier.width(10.dp))
             }
@@ -115,17 +116,17 @@ fun ChooseCryptoTopBar(
 }
 
 @Composable
-fun FavouriteCryptoChooser(
-    cryptoViewModel: CryptoViewModel,
-    allCryptos: List<Crypto>,
+fun FavouriteStockChooser(
+    stocksViewModel: StocksViewModel,
+    allStocks: List<Stock>,
     navController: NavController
 ) {
-    val textOfCryptoQuery = remember { mutableStateOf("") }
+    val textOfStockQuery = remember { mutableStateOf("") }
     val searchBoxActive = remember { mutableStateOf(false) }
-    val cryptos = allCryptos
-        .filter { it.name.equals(textOfCryptoQuery.value, ignoreCase = true) || it.ticker.contains(textOfCryptoQuery.value, ignoreCase = true) }
+    val stocksFiltered = allStocks
+        .filter { it.name.contains(textOfStockQuery.value, ignoreCase = true) || it.ticker.contains(textOfStockQuery.value, ignoreCase = true) }
         .sortedBy { it.name.lowercase() }
-    val cryptoChoosen = remember { mutableListOf<Crypto>()}
+    val stocksChoosen = remember { mutableListOf<Stock>()}
 
     Column(
         Modifier
@@ -133,7 +134,7 @@ fun FavouriteCryptoChooser(
             .background(LighterBlack)
             .padding(top = getSystemStatusbarHeightInDp(LocalContext.current).dp)
     ) {
-        ChooseCryptoTopBar(navController = navController, cryptoQueryText = textOfCryptoQuery, searchBoxActive = searchBoxActive)
+        ChooseStockTopBar(navController = navController, stockQueryText = textOfStockQuery, searchBoxActive = searchBoxActive)
 
         Box(
             Modifier.fillMaxSize(),
@@ -143,10 +144,10 @@ fun FavouriteCryptoChooser(
                 Modifier.fillMaxSize()
             ) {
                 itemsIndexed(
-                    cryptos
-                ) { idx, crypto ->
-                    // controllo se questa crypto è stata aggiunta all'elenco delle crypto scelte
-                    val checked = remember { mutableStateOf(cryptoChoosen.find { it.ticker == crypto.ticker } != null) }
+                    stocksFiltered
+                ) { idx, stock ->
+                    // controllo se questa azione è stata aggiunta all'elenco delle azioni scelte
+                    val checked = remember { mutableStateOf(stocksChoosen.find { it.ticker == stock.ticker } != null) }
 
                     Row(
                         modifier = Modifier
@@ -154,19 +155,13 @@ fun FavouriteCryptoChooser(
                             .padding(horizontal = 15.dp, vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = rememberAsyncImagePainter(crypto.imageUrl),
-                            contentDescription = "crypto icon",
-                            modifier = Modifier.size(32.dp)
+                        Text(
+                            text = stock.name,
+                            color = WhiteColor
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = crypto.name,
-                            color = WhiteColor
-                        )
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Text(
-                            text = crypto.ticker.uppercase(),
+                            text = stock.ticker.uppercase(),
                             color = WhiteDark2
                         )
                         Spacer(Modifier.weight(1f))
@@ -175,17 +170,17 @@ fun FavouriteCryptoChooser(
                             onCheckedChange = {
                                 checked.value = !checked.value
                                 if(checked.value)
-                                    cryptoChoosen.add(crypto)
+                                    stocksChoosen.add(stock)
                                 else
-                                    cryptoChoosen.remove(crypto)
+                                    stocksChoosen.remove(stock)
                             },
                             colors = CheckboxDefaults.colors(
                                 checkedColor = MainGreen
                             )
                         )
                     }
-                    
-                    if(idx == cryptos.size - 1) {
+
+                    if(idx == stocksFiltered.size - 1) {
                         // lo spacer serve altrimenti il FAB si sovrappone all'ultima checkbox impedendo di premerla
                         Spacer(modifier = Modifier.height(60.dp))
                     }
@@ -199,7 +194,7 @@ fun FavouriteCryptoChooser(
                 FloatingActionButton(
                     backgroundColor = MainGreen,
                     onClick = {
-                        cryptoViewModel.addCryptosToFavourite(cryptoChoosen)
+                        stocksViewModel.addStocksToFavourite(stocksChoosen.map { it.ticker })
                         navController.popBackStack()
                     }
                 ) {

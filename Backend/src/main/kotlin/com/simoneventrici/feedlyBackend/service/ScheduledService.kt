@@ -9,7 +9,8 @@ import kotlin.coroutines.coroutineContext
 @Service
 class ScheduledService(
     private val newsService: NewsService,
-    private val soccerService: SoccerService
+    private val soccerService: SoccerService,
+    private val stockService: StockService
 ) {
 
     // fetcho le news ogni 8 ore
@@ -18,13 +19,16 @@ class ScheduledService(
     val INTERVAL_REMOVE_NEWS: Long = 1000 * 60 * 60 * 25
     // dati del calcio ogni 12 ore
     val INTERVAL_FETCH_SOCCER_DATA: Long = 1000 * 60 * 60 * 12
+    // finanza ogni 2 ore
+    val INTERVAL_FETCH_STOCKS: Long = 1000 * 60 * 60 * 2
 
     val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 
     init {
         //GlobalScope.launch(Dispatchers.IO) { checkAndFetchNews() }
-        GlobalScope.launch(Dispatchers.IO) { fetchSoccerData() }
-        GlobalScope.launch(Dispatchers.Default) { removeOldNews() }
+        //GlobalScope.launch(Dispatchers.IO) { fetchSoccerData() }
+        //GlobalScope.launch(Dispatchers.Default) { removeOldNews() }
+        GlobalScope.launch(Dispatchers.Default) { fetchFinanceData() }
     }
 
     suspend fun checkAndFetchNews() {
@@ -55,12 +59,25 @@ class ScheduledService(
             kotlin.runCatching {
                 soccerService.fetchAllTeamMatches()
                 println("${dateFormat.format(Date())} FETCHED Team Matches")
-                //soccerService.fetchAllLeaguesStandings()
+                soccerService.fetchAllLeaguesStandings()
                 println("${dateFormat.format(Date())} FETCHED League Standings")
             }.onFailure {
                 println("${it::class} : ${it.message}")
             }
             delay(INTERVAL_FETCH_SOCCER_DATA)
         }
+    }
+
+    suspend fun fetchFinanceData() {
+        delay(2000)
+        //while(coroutineContext.isActive) {
+            kotlin.runCatching {
+                stockService.fetchMarketData()
+                println("${dateFormat.format(Date())} FETCHED Finance Data")
+            }.onFailure {
+                println("${it::class} : ${it.message}")
+            }
+            delay(INTERVAL_FETCH_STOCKS)
+        //}
     }
 }

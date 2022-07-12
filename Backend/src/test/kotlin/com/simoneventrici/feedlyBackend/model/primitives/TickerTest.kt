@@ -7,7 +7,7 @@ internal class TickerTest {
 
     @Test
     fun shouldFailRegex() {
-        val values = listOf("safe_moon", "verylongtickernotgood", "bitcoin@eth", "<btc>")
+        val values = listOf("safe_moon", "verylongtickernotgood", "bitcoin@eth", "<btc>", "")
         values.forEach { assertThrows(IllegalStateException::class.java) { Ticker(it) } }
     }
 

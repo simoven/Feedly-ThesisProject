@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,6 +24,9 @@ import com.simoneventrici.feedly.presentation.profile.ProfileScreen
 import com.simoneventrici.feedly.presentation.soccer.SoccerScreen
 import com.simoneventrici.feedly.presentation.soccer.SoccerViewModel
 import com.simoneventrici.feedly.presentation.soccer.components.ManageTeamsScreen
+import com.simoneventrici.feedly.presentation.stocks.StockScreen
+import com.simoneventrici.feedly.presentation.stocks.StocksViewModel
+import com.simoneventrici.feedly.presentation.stocks.components.FavouriteStockChooser
 import com.simoneventrici.feedly.presentation.weather.WeatherScreen
 import com.simoneventrici.feedly.presentation.weather.WeatherViewModel
 import com.simoneventrici.feedly.presentation.weather.components.CityChooserScreen
@@ -68,8 +72,11 @@ fun Navigator(
     val exploreViewModel: ExploreViewModel = hiltViewModel()
     val cryptoViewModel: CryptoViewModel = hiltViewModel()
     val weatherViewModel: WeatherViewModel = hiltViewModel()
-    val userFavouritesCrypto = cryptoViewModel.favouritesCrypto.value.data?.map { it.ticker } ?: emptyList()
+    // se cambiano i preferiti, allora riapplico il filtro per mostrare le altre crypto nella schermata di aggiunta
+    val userFavouritesCrypto = remember(cryptoViewModel.favouritesCrypto.value.data?.size ) { cryptoViewModel.favouritesCrypto.value.data?.map { it.ticker } ?: emptyList() }
     val soccerViewModel: SoccerViewModel = hiltViewModel()
+    val stocksViewModel: StocksViewModel = hiltViewModel()
+    val userFavouriteStocks = remember(stocksViewModel.favouriteStocks.value.data?.size ) { stocksViewModel.favouriteStocks.value.data?.map { it.ticker } ?: emptyList() }
 
     NavHost(navController = controller, startDestination = Screen.ExploreScreen.route) {
         composable(route = Screen.ExploreScreen.route) {
@@ -105,6 +112,16 @@ fun Navigator(
         }
         composable(route = Screen.ManageSoccerTeamsScreen.route) {
             ManageTeamsScreen(soccerViewModel = soccerViewModel, navController = controller)
+        }
+        composable(route = Screen.StockScreen.route) {
+            StockScreen(navController = controller, stocksViewModel = stocksViewModel)
+        }
+        composable(route = Screen.AddNewStockScreen.route) {
+            FavouriteStockChooser(
+                stocksViewModel = stocksViewModel,
+                allStocks = stocksViewModel.allStocks.value.filter { !userFavouriteStocks.contains(it.ticker) },
+                navController = controller
+            )
         }
     }
 }

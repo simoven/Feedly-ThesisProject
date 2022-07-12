@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Component
 class NewsAPI(
@@ -26,14 +28,21 @@ class NewsAPI(
         return "$BASE_URL/$path?pageSize=$pageSize&apiKey=${appProperties.newsApiKey}$categoryPath$keywordPath$sortByPath$countryPath$languagePath"
     }
 
-    fun getNewsByCategory(category: News.Category, country: String): ResponseEntity<NewsListDto> {
-        return restTemplate.getForEntity(
-            getUrl(
-                path = "top-headlines",
-                category = category.value,
-                country = country,
-                pageSize = "25"
+    fun getNewsByCategory(category: News.Category, country: String): ResponseEntity<NewsListDto>? {
+        var result: ResponseEntity<NewsListDto>? = null
+        kotlin.runCatching {
+            result = restTemplate.getForEntity(
+                getUrl(
+                    path = "top-headlines",
+                    category = category.value,
+                    country = country,
+                    pageSize = "25"
+                )
             )
-        )
+        }.onFailure {
+            println(SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(Date()) +  it.message)
+        }
+
+        return result
     }
 }
