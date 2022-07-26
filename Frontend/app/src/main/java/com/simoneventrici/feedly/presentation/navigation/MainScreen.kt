@@ -13,6 +13,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.simoneventrici.feedly.R
+import com.simoneventrici.feedly.presentation.authentication.AuthViewModel
+import com.simoneventrici.feedly.presentation.authentication.LoginScreen
+import com.simoneventrici.feedly.presentation.authentication.SignupScreen
+import com.simoneventrici.feedly.presentation.authentication.WelcomeScreen
 import com.simoneventrici.feedly.presentation.crypto.CryptoScreen
 import com.simoneventrici.feedly.presentation.crypto.CryptoViewModel
 import com.simoneventrici.feedly.presentation.crypto.components.FavouriteCryptoChooser
@@ -23,6 +27,7 @@ import com.simoneventrici.feedly.presentation.home.HomeScreen
 import com.simoneventrici.feedly.presentation.profile.ProfileScreen
 import com.simoneventrici.feedly.presentation.soccer.SoccerScreen
 import com.simoneventrici.feedly.presentation.soccer.SoccerViewModel
+import com.simoneventrici.feedly.presentation.soccer.components.ManageLeagueScreen
 import com.simoneventrici.feedly.presentation.soccer.components.ManageTeamsScreen
 import com.simoneventrici.feedly.presentation.stocks.StockScreen
 import com.simoneventrici.feedly.presentation.stocks.StocksViewModel
@@ -30,7 +35,6 @@ import com.simoneventrici.feedly.presentation.stocks.components.FavouriteStockCh
 import com.simoneventrici.feedly.presentation.weather.WeatherScreen
 import com.simoneventrici.feedly.presentation.weather.WeatherViewModel
 import com.simoneventrici.feedly.presentation.weather.components.CityChooserScreen
-import com.simoneventrici.feedly.ui.theme.LighterGray
 import com.simoneventrici.feedly.ui.theme.LighterGrayNavBar
 
 data class NavigationItem(
@@ -41,8 +45,26 @@ data class NavigationItem(
 )
 
 @Composable
-fun MainScreen() {
+fun AppRouter() {
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val userState = authViewModel.userState.value
+    val isAuthenticating = authViewModel.isAuthenticating.value
+
+    val authenticated = userState != null
+
+    if(!isAuthenticating) {
+        if (!authenticated) {
+            AuthenticationNavigator(authViewModel)
+        } else {
+            MainScreen(authViewModel)
+        }
+    }
+}
+
+@Composable
+fun MainScreen(authViewModel: AuthViewModel) {
     val navController = rememberNavController()
+
     Scaffold(
         bottomBar = {
             NavBar(
@@ -60,14 +82,15 @@ fun MainScreen() {
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             // Dentro lo scaffold c'è il navHost che cambia le schermate
-            Navigator(controller = navController)
+            Navigator(controller = navController, authViewModel = authViewModel)
         }
     }
 }
 
 @Composable
 fun Navigator(
-    controller: NavHostController
+    controller: NavHostController,
+    authViewModel: AuthViewModel
 ) {
     val exploreViewModel: ExploreViewModel = hiltViewModel()
     val cryptoViewModel: CryptoViewModel = hiltViewModel()
@@ -83,10 +106,14 @@ fun Navigator(
             ExploreScreen(exploreViewModel, navController = controller)
         }
         composable(route = Screen.HomeScreen.route) {
-            HomeScreen(navController = controller, currentWeatherInfo = weatherViewModel.currentWeatherStatus.value.data?.currentWeather)
+            HomeScreen(
+                navController = controller,
+                currentWeatherInfo = weatherViewModel.currentWeatherStatus.value.data?.currentWeather,
+                user = authViewModel.userState.value
+            )
         }
         composable(route = Screen.ProfileScreen.route) {
-            ProfileScreen()
+            ProfileScreen(authViewModel = authViewModel)
         }
         composable(route = Screen.CryptoScreen.route) {
             CryptoScreen(navController = controller, cryptoViewModel = cryptoViewModel)
@@ -122,6 +149,28 @@ fun Navigator(
                 allStocks = stocksViewModel.allStocks.value.filter { !userFavouriteStocks.contains(it.ticker) },
                 navController = controller
             )
+        }
+        composable(route = Screen.ChooseFavouriteLeagueScreen.route) {
+            ManageLeagueScreen(soccerViewModel = soccerViewModel, navController = controller)
+        }
+    }
+}
+
+@Composable
+fun AuthenticationNavigator(
+    authViewModel: AuthViewModel
+) {
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = Screen.WelcomeScreen.route) {
+        composable(route = Screen.WelcomeScreen.route) {
+            WelcomeScreen(navController = navController)
+        }
+        composable(route = Screen.LoginScreen.route) {
+            LoginScreen(navController = navController, authViewModel = authViewModel)
+        }
+        composable(route = Screen.SignUpScreen.route) {
+            SignupScreen(navController = navController, authViewModel = authViewModel)
         }
     }
 }

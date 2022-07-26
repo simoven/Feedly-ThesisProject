@@ -2,6 +2,7 @@ package com.simoneventrici.feedlyBackend.controller
 
 import com.simoneventrici.feedlyBackend.controller.exceptions.UnauthorizedException
 import com.simoneventrici.feedlyBackend.model.LeagueStandings
+import com.simoneventrici.feedlyBackend.model.SoccerLeague
 import com.simoneventrici.feedlyBackend.model.SoccerTeam
 import com.simoneventrici.feedlyBackend.model.TeamMatch
 import com.simoneventrici.feedlyBackend.service.SoccerService
@@ -84,6 +85,11 @@ class SoccerController(
     @GetMapping("allTeams")
     fun getAllTeams(): List<SoccerTeam> {
         return soccerService.allTeams
+    }
+
+    @GetMapping("allSoccerLeagues")
+    fun getAllSoccerLeagues(): List<SoccerLeague> {
+        return soccerService.allLeagues
     }
 
 }

@@ -5,12 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.simoneventrici.feedly.commons.Constants
 import com.simoneventrici.feedly.commons.DataState
 import com.simoneventrici.feedly.model.Emoji
-import com.simoneventrici.feedly.model.News
 import com.simoneventrici.feedly.model.NewsAndReactions
 import com.simoneventrici.feedly.model.primitives.NewsCategory
+import com.simoneventrici.feedly.persistence.DataStorePreferences
 import com.simoneventrici.feedly.repository.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -19,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExploreViewModel @Inject constructor(
-    private val newsRepository: NewsRepository
+    private val newsRepository: NewsRepository,
+    private val preferences: DataStorePreferences
 ): ViewModel() {
 
     // contengono tutti i dati relativi alle notizie, se sono stati fetchate, se ci sono stati errori ecc
@@ -29,6 +29,7 @@ class ExploreViewModel @Inject constructor(
     // delle reaction in seguito all'inserimento da parte dell'utente di una reaction
     // serve per fare la ricomposizione delle pagine
     val latestNewsIdReactionAddedByCategory = mutableStateOf<Map <String, Pair<Int, String>>>(emptyMap())
+    val userToken = mutableStateOf("")
 
     private var lastScrollIndex = 0
     private val _scrollUp = MutableLiveData(false)
@@ -36,7 +37,15 @@ class ExploreViewModel @Inject constructor(
         get() = _scrollUp
 
     init {
-        getNewsByCategory(Constants.TEST_TOKEN, NewsCategory.Business(), "en")
+        observeTokenChanges()
+    }
+
+    private fun observeTokenChanges() {
+        preferences.tokensFlow.onEach { token ->
+            userToken.value = token ?: ""
+            if(token?.isNotBlank() == true)
+                getNewsByCategory(token, NewsCategory.Business(), "en")
+        }.launchIn(viewModelScope)
     }
 
     fun getNewsByCategory(token: String, category: NewsCategory, language: String) {
@@ -79,10 +88,6 @@ class ExploreViewModel @Inject constructor(
                 val currentMap = latestNewsIdReactionAddedByCategory.value.toMutableMap()
                 currentMap[category] = Pair(newsId, news?.userReaction ?: "")
                 latestNewsIdReactionAddedByCategory.value = currentMap
-            }
-            else {
-                // TODO
-                println("ERRORE NEWS REAZIONE: ${state.errorMsg}")
             }
         }.launchIn(viewModelScope)
     }

@@ -1,6 +1,7 @@
 package com.simoneventrici.feedly.remote.api
 
 import com.simoneventrici.feedly.remote.dto.LeagueStandingsDto
+import com.simoneventrici.feedly.remote.dto.SoccerLeagueDto
 import com.simoneventrici.feedly.remote.dto.SoccerTeamDto
 import com.simoneventrici.feedly.remote.dto.TeamMatchDto
 import okhttp3.RequestBody
@@ -12,6 +13,9 @@ interface SoccerAPI {
 
     @GET("allTeams")
     suspend fun getAllTeams(): List<SoccerTeamDto>
+
+    @GET("allSoccerLeagues")
+    suspend fun getAllSoccerLeagues(): List<SoccerLeagueDto>
 
     @POST("setFavouriteTeams")
     suspend fun setUserFavouriteTeams(

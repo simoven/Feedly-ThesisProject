@@ -1,6 +1,7 @@
 package com.simoneventrici.feedlyBackend.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.simoneventrici.feedlyBackend.model.primitives.Email
 import com.simoneventrici.feedlyBackend.model.primitives.Password
 import com.simoneventrici.feedlyBackend.model.primitives.Username
@@ -22,8 +23,9 @@ data class User(
         }
     }
 
-    fun getUsername(): String = username.value
-    fun getEmail(): String = email.value
+    fun getUsername(): String = username.toString()
+    fun getEmail(): String = email.toString()
+
     fun getPassword(): String {
         // read-once password
         val realPassword = password.value

@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.simoneventrici.feedly.presentation.navigation.AppRouter
 import com.simoneventrici.feedly.presentation.navigation.MainScreen
 import com.simoneventrici.feedly.ui.theme.FeedlyTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             FeedlyTheme {
-                MainScreen()
+                AppRouter()
             }
         }
     }

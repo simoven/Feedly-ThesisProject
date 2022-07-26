@@ -59,11 +59,13 @@ fun HourlyWeatherBox(
                         color = WhiteDark1,
                         fontSize = 14.sp
                     )
+                    Spacer(modifier = Modifier.height(5.dp))
                     Image(
                         painter = painterResource(id = WeatherIconParser.parse(weatherInfo.weatherIconCode).res_id),
                         modifier = Modifier.size(32.dp),
                         contentDescription = "weather icon"
                     )
+                    Spacer(modifier = Modifier.height(5.dp))
                     Text(
                         text = "${weatherInfo.temperature.roundToInt()}°",
                         color = WhiteColor,
@@ -127,6 +129,7 @@ fun CurrentWeatherBox(
                 contentDescription = "back button",
                 modifier = Modifier
                     .size(32.dp)
+                    .clip(RoundedCornerShape(20.dp))
                     .clickable { navController.popBackStack() }
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -140,7 +143,9 @@ fun CurrentWeatherBox(
             Image(
                 painter = painterResource(id = R.drawable.search_unchecked),
                 contentDescription = "search button",
-                modifier = Modifier.size(28.dp).clickable { onSearchClicked() }
+                modifier = Modifier
+                    .size(28.dp)
+                    .clickable { onSearchClicked() }
             )
         }
 

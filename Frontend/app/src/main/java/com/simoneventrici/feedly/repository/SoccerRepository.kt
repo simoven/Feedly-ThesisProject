@@ -3,10 +3,7 @@ package com.simoneventrici.feedly.repository
 import android.content.Context
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.commons.DataState
-import com.simoneventrici.feedly.model.LeagueStandings
-import com.simoneventrici.feedly.model.NewsAndReactions
-import com.simoneventrici.feedly.model.SoccerTeam
-import com.simoneventrici.feedly.model.TeamMatch
+import com.simoneventrici.feedly.model.*
 import com.simoneventrici.feedly.remote.api.SoccerAPI
 import com.simoneventrici.feedly.remote.dto.AddReactionResponse
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +23,14 @@ class SoccerRepository(
     suspend fun getAllTeams(): List<SoccerTeam> {
         return try {
             soccerAPI.getAllTeams().map { it.toSoccerTeam() }
+        } catch(e: Exception) {
+            emptyList()
+        }
+    }
+
+    suspend fun getAllSoccerLeagues(): List<SoccerLeague> {
+        return try {
+            soccerAPI.getAllSoccerLeagues().map { it.toSoccerLeague() }
         } catch(e: Exception) {
             emptyList()
         }

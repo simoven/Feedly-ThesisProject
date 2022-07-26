@@ -1,12 +1,9 @@
 package com.simoneventrici.feedly.presentation.soccer.components
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -22,9 +19,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.model.LeagueStandings
+import com.simoneventrici.feedly.presentation.navigation.Screen
 import com.simoneventrici.feedly.presentation.soccer.SoccerViewModel
 import com.simoneventrici.feedly.ui.theme.MainGreen
 import com.simoneventrici.feedly.ui.theme.WhiteColor
@@ -142,6 +141,7 @@ fun StandingsBox(
 @Composable
 fun StandingsComponent(
     soccerViewModel: SoccerViewModel,
+    navController: NavController,
     standings: List<LeagueStandings>
 ) {
 
@@ -177,7 +177,8 @@ fun StandingsComponent(
             Text(
                 text = LocalContext.current.getString(R.string.change_league),
                 color = MainGreen,
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                modifier = Modifier.clickable { navController.navigate(Screen.ChooseFavouriteLeagueScreen.route) }
             )
         }
 

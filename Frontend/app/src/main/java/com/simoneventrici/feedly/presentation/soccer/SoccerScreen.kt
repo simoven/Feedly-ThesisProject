@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.commons.getSystemStatusbarHeightInDp
 import com.simoneventrici.feedly.presentation.soccer.components.StandingsComponent
 import com.simoneventrici.feedly.presentation.soccer.components.FavouriteTeamMatchesSection
@@ -30,12 +31,12 @@ fun SoccerScreen(
             .background(LighterBlack)
             .padding(top = getSystemStatusbarHeightInDp(LocalContext.current).dp)
     ) {
-        TopBar(navController = navController)
+        TopBar(navController = navController, textId = R.string.soccer)
 
         Spacer(modifier = Modifier.height(15.dp))
         FavouriteTeamMatchesSection(soccerViewModel = soccerViewModel, teamMatches = favTeamMatches, navController = navController)
 
         Spacer(modifier = Modifier.height(15.dp))
-        StandingsComponent(soccerViewModel = soccerViewModel, standings = currentStandings)
+        StandingsComponent(soccerViewModel = soccerViewModel, standings = currentStandings, navController = navController)
     }
 }

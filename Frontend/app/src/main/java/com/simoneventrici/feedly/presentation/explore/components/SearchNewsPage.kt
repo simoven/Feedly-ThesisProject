@@ -2,6 +2,7 @@ package com.simoneventrici.feedly.presentation.explore.components
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -47,6 +49,7 @@ fun SearchTopBar(
             contentDescription = "Back button",
             modifier = Modifier
                 .size(32.dp)
+                .clip(RoundedCornerShape(20.dp))
                 .clickable { navController.popBackStack() }
         )
 

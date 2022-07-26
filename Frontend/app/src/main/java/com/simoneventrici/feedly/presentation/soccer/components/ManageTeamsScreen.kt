@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -43,20 +45,21 @@ fun ManageTeamsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    top = getSystemStatusbarHeightInDp(LocalContext.current).dp + 10.dp,
+                    top = getSystemStatusbarHeightInDp(LocalContext.current).dp,
                     start = 20.dp,
                     end = 20.dp
                 )
         ) {
             Row(
-                Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                Modifier.fillMaxWidth().padding(vertical = 10.dp),
+                verticalAlignment = CenterVertically
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.back_arrow_icon),
                     contentDescription = "back button",
                     modifier = Modifier
                         .size(32.dp)
+                        .clip(RoundedCornerShape(20.dp))
                         .clickable { navController.popBackStack() }
                 )
                 Spacer(modifier = Modifier.width(20.dp))

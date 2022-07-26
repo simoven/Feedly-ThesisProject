@@ -9,6 +9,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -42,6 +43,12 @@ class AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(AuthAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(authAPI: AuthAPI): AuthRepository {
+        return AuthRepository(authAPI)
     }
 
     @Provides

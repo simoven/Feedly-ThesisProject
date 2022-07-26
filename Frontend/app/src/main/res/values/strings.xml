@@ -53,4 +53,27 @@
     <string name="favourite_stocks">Your favourites stocks</string>
     <string name="add_stock_label">Add stocks</string>
     <string name="search_stock">Search stock</string>
+    <string name="choose_league">Choose league</string>
+    <string name="welcome_on_board">Welcome on board!</string>
+    <string name="get_started_now">Get started now</string>
+    <string name="login">Login</string>
+    <string name="signup">Sign Up</string>
+    <string name="google_login">"Login with Google "</string>
+    <string name="or">Or</string>
+    <string name="dont_have_account">Don\'t have an account ?</string>
+    <string name="already_have_account">Already have an account ?</string>
+    <string name="string_too_short">The provided string is too short</string>
+    <string name="string_too_long">The provided string is too long</string>
+    <string name="invalid_username">The username provided is not valid</string>
+    <string name="invalid_password">The password provided is not valid</string>
+    <string name="invalid_email">The e-mail provided is not valid</string>
+    <string name="invalid_string">The string provided is not valid</string>
+    <string name="wrong_username_password">Invalid combination of username/password</string>
+    <string name="username_email_already_exists">Username/Email already exists</string>
+    <string name="login_error">Error during login, please retry</string>
+    <string name="signup_error">Error during sign up, please retry</string>
+    <string name="weather">Weather</string>
+    <string name="finance">Finance</string>
+    <string name="crypto">Crypto</string>
+
 </resources>

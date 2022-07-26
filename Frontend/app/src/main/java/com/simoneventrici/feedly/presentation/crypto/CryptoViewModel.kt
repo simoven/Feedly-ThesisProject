@@ -12,6 +12,7 @@ import com.simoneventrici.feedly.commons.DataState
 import com.simoneventrici.feedly.model.Crypto
 import com.simoneventrici.feedly.model.CryptoMarketData
 import com.simoneventrici.feedly.model.CryptoMarketStats
+import com.simoneventrici.feedly.persistence.DataStorePreferences
 import com.simoneventrici.feedly.repository.CryptoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -21,7 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CryptoViewModel @Inject constructor(
-    private val cryptoRepository: CryptoRepository
+    private val cryptoRepository: CryptoRepository,
+    private val preferences: DataStorePreferences
 ): ViewModel() {
     
     val favouritesCrypto = mutableStateOf<DataState<List<Crypto>>>(DataState.None())
@@ -29,6 +31,7 @@ class CryptoViewModel @Inject constructor(
     val cryptoGlobalMarketStats = mutableStateOf<DataState<CryptoMarketStats>>(DataState.None())
     val allCryptos = mutableStateOf<List<Crypto>>(emptyList())
     val isRefreshing = mutableStateOf(false)
+    val userToken = mutableStateOf("")
 
     // è l'altezza in dp del marketStatsBox
     val statsBoxHeight = mutableStateOf(0)
@@ -37,9 +40,17 @@ class CryptoViewModel @Inject constructor(
         get() = _scrollUp
 
     init {
+        observeTokenChanges()
         fetchAllCryptos()
-        fetchFavouritesCrypto(Constants.TEST_TOKEN)
         fetchMarketStats()
+    }
+
+    private fun observeTokenChanges() {
+        preferences.tokensFlow.onEach { token ->
+            userToken.value = token ?: ""
+            if(token?.isNotBlank() == true)
+                fetchFavouritesCrypto(userToken.value)
+        }.launchIn(viewModelScope)
     }
 
     private fun fetchAllCryptos() {
@@ -84,20 +95,20 @@ class CryptoViewModel @Inject constructor(
     fun addCryptosToFavourite(cryptos: List<Crypto>) {
         viewModelScope.launch {
             cryptos.forEach { crypto ->
-                if(cryptoRepository.addCryptoToFavourite(Constants.TEST_TOKEN, crypto.ticker) && favouritesCrypto.value is DataState.Success) {
+                if(cryptoRepository.addCryptoToFavourite(userToken.value, crypto.ticker) && favouritesCrypto.value is DataState.Success) {
                     val oldList = favouritesCrypto.value.data?.toMutableList() ?: mutableListOf()
                     oldList.add(crypto)
                     val newState = DataState.Success(data = oldList.toList())
                     favouritesCrypto.value = newState
                 }
             }
-            fetchFavouritesCrypto(Constants.TEST_TOKEN)
+            fetchFavouritesCrypto(userToken.value)
         }
     }
 
     fun removeFavouriteCrypto(crypto: Crypto) {
         viewModelScope.launch {
-            cryptoRepository.removeCryptoFromFavourite(Constants.TEST_TOKEN, crypto.ticker)
+            cryptoRepository.removeCryptoFromFavourite(userToken.value, crypto.ticker)
         }
         val oldList = favouritesCrypto.value.data?.toMutableList() ?: mutableListOf()
         oldList.removeIf { it.ticker == crypto.ticker }

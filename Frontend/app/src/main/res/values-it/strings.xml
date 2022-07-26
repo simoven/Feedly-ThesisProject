@@ -44,6 +44,9 @@
     <string name="in_keywords">nelle keyword</string>
     <string name="in_sources">nelle fonti</string>
     <string name="search_by_keyword_source">Cerca per keyword o fonte</string>
+    <string name="weather">Meteo</string>
+    <string name="finance">Finanza</string>
+    <string name="crypto">Cripto</string>
     <string name="soccer">Calcio</string>
     <string name="latest_matches">Ultime partite</string>
     <string name="manage_teams">Gestisci squadre</string>
@@ -54,4 +57,23 @@
     <string name="favourite_stocks">Le tue azioni preferite</string>
     <string name="add_stock_label">Aggiungi azioni</string>
     <string name="search_stock">Cerca azione</string>
+    <string name="choose_league">Scegli lega</string>
+    <string name="welcome_on_board">Benvenuto a bordo!</string>
+    <string name="get_started_now">Inizia ora</string>
+    <string name="login">Accedi</string>
+    <string name="signup">Registrati</string>
+    <string name="google_login">"Accedi con Google "</string>
+    <string name="or">Oppure</string>
+    <string name="dont_have_account">Non hai un account ?</string>
+    <string name="already_have_account">Hai già un account ?</string>
+    <string name="string_too_short">La stringa inserita è troppo corta</string>
+    <string name="string_too_long">La stringa inserita è troppo lunga</string>
+    <string name="invalid_username">L\'username inserito non è valido</string>
+    <string name="invalid_password">La password inserita non è valida</string>
+    <string name="invalid_email">L\'email fornita non è valida</string>
+    <string name="invalid_string">La stringa fornita non è valida</string>
+    <string name="wrong_username_password">Combinazione di username/password non valida</string>
+    <string name="username_email_already_exists">L\'Username o l\'Email esistono già</string>
+    <string name="login_error">Errore durante il login, riprova</string>
+    <string name="signup_error">Errore durate la registrazione, riprova</string>
 </resources>

@@ -30,7 +30,6 @@ import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import com.simoneventrici.feedly.R
-import com.simoneventrici.feedly.commons.Constants
 import com.simoneventrici.feedly.commons.DataState
 import com.simoneventrici.feedly.commons.getSystemStatusbarHeightInDp
 import com.simoneventrici.feedly.model.Emoji
@@ -69,6 +68,7 @@ fun ExploreScreen(
     val allCategory = NewsCategory.getAll()
     val currentCategory = allCategory[pagerState.currentPage]
     val scrollUpState = newsViewModel.scrollUp.observeAsState()
+    val userToken = newsViewModel.userToken.value
 
     val pagesMap = remember { mutableMapOf<String, PageState>() }
 
@@ -77,13 +77,13 @@ fun ExploreScreen(
 
     // se non ho le notizie di questa categoria, le fetcho
     if(newsByCategoryState.value[currentCategory.value] == null)
-        newsViewModel.getNewsByCategory(Constants.TEST_TOKEN, currentCategory, "en")
+        newsViewModel.getNewsByCategory(userToken, currentCategory, "en")
 
     // fetcho le notizie della categoria immediatamente successiva, per avere una transizione pulita nello swiper
     // se non è stato già richiesto il fetch per quella categoria9
     allCategory.getOrNull(pagerState.currentPage + 1)?.run {
         if(newsByCategoryState.value[this.value] == null) {
-            newsViewModel.getNewsByCategory(Constants.TEST_TOKEN, allCategory[pagerState.currentPage + 1], "en")
+            newsViewModel.getNewsByCategory(userToken, allCategory[pagerState.currentPage + 1], "en")
         }
     }
 
@@ -125,7 +125,7 @@ fun ExploreScreen(
                                 val onEmojiClicked = { emoji: Emoji ->
                                     newsViewModel.addReactionToNews(
                                         category = categoryStr,
-                                        authToken = Constants.TEST_TOKEN,
+                                        authToken = userToken,
                                         newsId = news.news.id,
                                         emoji = emoji
                                     )

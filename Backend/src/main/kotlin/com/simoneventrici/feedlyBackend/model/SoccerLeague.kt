@@ -1,9 +1,10 @@
 package com.simoneventrici.feedlyBackend.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.sql.ResultSet
 
 data class SoccerLeague(
-    val leagueId: Int,
+    @JsonProperty("league_id") val leagueId: Int,
     val name: String,
     val country: String
 ) {

@@ -38,9 +38,12 @@ class AuthController(
     @PostMapping("tokenLogin")
     fun doTokenLogin(@RequestBody obj: JSONObject): ResponseEntity<JSONObject> {
         val token = obj["Authorization"] as String? ?: throw IllegalStateException("No Authorization token provided")
-
         userService.checkUserToken(token)?.let {
-            return ResponseEntity(JSONObject().apply { put("user", it) }, HttpStatus.OK)
+            val respObj = JSONObject().apply {
+                put("username", it.username.value)
+                put("email", it.email.value)
+            }
+            return ResponseEntity(JSONObject().apply { put("user", respObj) }, HttpStatus.OK)
         }
         return ResponseEntity(JSONObject().apply { put("msg", "Invalid token provided for authentication") }, HttpStatus.UNAUTHORIZED)
     }

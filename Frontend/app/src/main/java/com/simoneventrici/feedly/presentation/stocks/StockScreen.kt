@@ -26,12 +26,9 @@ import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.simoneventrici.feedly.R
-import com.simoneventrici.feedly.commons.Constants
 import com.simoneventrici.feedly.commons.DataState
 import com.simoneventrici.feedly.commons.getSystemStatusbarHeightInDp
 import com.simoneventrici.feedly.presentation.components.ShimmerEffectLoader
-import com.simoneventrici.feedly.presentation.crypto.components.CryptoInfoRow
-import com.simoneventrici.feedly.presentation.crypto.components.FavouriteCryptosBox
 import com.simoneventrici.feedly.presentation.navigation.Screen
 import com.simoneventrici.feedly.presentation.stocks.components.StockComponent
 import com.simoneventrici.feedly.presentation.stocks.components.StockLoader
@@ -77,6 +74,7 @@ fun StockScreen(
 ) {
     val isRefreshing by stocksViewModel.isRefreshing
     val favStocks = stocksViewModel.favouriteStocks.value
+    val sortedStocks = remember(stocksViewModel.favouriteStocks.value) { stocksViewModel.favouriteStocks.value.data?.sortedBy { it.name } }
 
     Column(
         modifier = Modifier
@@ -93,7 +91,7 @@ fun StockScreen(
 
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing),
-            onRefresh = { stocksViewModel.getFavouriteStocks(Constants.TEST_TOKEN) }
+            onRefresh = { stocksViewModel.getFavouriteStocks() }
         ) {
             Column(
                 Modifier
@@ -101,36 +99,34 @@ fun StockScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 if(favStocks is DataState.Success) {
-                    favStocks.data?.let { stocksData ->
-                        stocksData.forEach { stockData ->
-                            val isRemoved = remember(stockData.ticker) { mutableStateOf(false) }
+                    sortedStocks?.forEach { stockData ->
+                        val isRemoved = remember(stockData.ticker) { mutableStateOf(false) }
 
-                            val rowOffset = animateFloatAsState(
-                                targetValue = if(isRemoved.value) -2000f else 0f,
-                                animationSpec = if(!isRemoved.value) tween(0) else tween(500)
-                            ) {
-                                if(it == -2000f) {
-                                    stocksViewModel.removeFavouriteStock(stockData.ticker)
+                        val rowOffset = animateFloatAsState(
+                            targetValue = if(isRemoved.value) -2000f else 0f,
+                            animationSpec = if(!isRemoved.value) tween(0) else tween(500)
+                        ) {
+                            if(it == -2000f) {
+                                stocksViewModel.removeFavouriteStock(stockData.ticker)
+                            }
+                        }
+
+                        val removeFavourite = SwipeAction(
+                            icon = painterResource(id = R.drawable.remove_icon),
+                            onSwipe = { isRemoved.value = true },
+                            background = ChartRed,
+                        )
+                        SwipeableActionsBox(
+                            swipeThreshold = 60.dp,
+                            endActions = listOf(removeFavourite),
+                            backgroundUntilSwipeThreshold = Color.Transparent,
+                        ) {
+                            StockComponent(
+                                stockData = stockData,
+                                modifier = Modifier.graphicsLayer {
+                                    translationX = rowOffset.value
                                 }
-                            }
-
-                            val removeFavourite = SwipeAction(
-                                icon = painterResource(id = R.drawable.remove_icon),
-                                onSwipe = { isRemoved.value = true },
-                                background = ChartRed,
                             )
-                            SwipeableActionsBox(
-                                swipeThreshold = 60.dp,
-                                endActions = listOf(removeFavourite),
-                                backgroundUntilSwipeThreshold = Color.Transparent,
-                            ) {
-                                StockComponent(
-                                    stockData = stockData,
-                                    modifier = Modifier.graphicsLayer {
-                                        translationX = rowOffset.value
-                                    }
-                                )
-                            }
                         }
                     }
                 }

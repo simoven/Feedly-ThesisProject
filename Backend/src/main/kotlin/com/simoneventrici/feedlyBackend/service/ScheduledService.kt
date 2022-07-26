@@ -28,7 +28,7 @@ class ScheduledService(
         //GlobalScope.launch(Dispatchers.IO) { checkAndFetchNews() }
         //GlobalScope.launch(Dispatchers.IO) { fetchSoccerData() }
         //GlobalScope.launch(Dispatchers.Default) { removeOldNews() }
-        GlobalScope.launch(Dispatchers.Default) { fetchFinanceData() }
+        //GlobalScope.launch(Dispatchers.Default) { fetchFinanceData() }
     }
 
     suspend fun checkAndFetchNews() {

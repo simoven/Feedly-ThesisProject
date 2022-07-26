@@ -48,19 +48,14 @@ fun ChooseStockTopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if(!searchBoxActive.value) {
-            Box(
-                Modifier
+            Image(
+                painter = painterResource(id = R.drawable.back_arrow_icon),
+                modifier = Modifier
+                    .size(32.dp)
                     .clip(RoundedCornerShape(20.dp))
                     .clickable { navController.popBackStack() },
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back_arrow_icon),
-                    modifier = Modifier
-                        .size(32.dp),
-                    contentDescription = "Back button",
-                )
-            }
+                contentDescription = "Back button",
+            )
             Spacer(modifier = Modifier.width(15.dp))
             Text(
                 text = LocalContext.current.getString(R.string.add_stock_label),
@@ -147,7 +142,7 @@ fun FavouriteStockChooser(
                     stocksFiltered
                 ) { idx, stock ->
                     // controllo se questa azione è stata aggiunta all'elenco delle azioni scelte
-                    val checked = remember { mutableStateOf(stocksChoosen.find { it.ticker == stock.ticker } != null) }
+                    val checked = remember(stocksFiltered.size) { mutableStateOf(stocksChoosen.find { it.ticker == stock.ticker } != null) }
 
                     Row(
                         modifier = Modifier

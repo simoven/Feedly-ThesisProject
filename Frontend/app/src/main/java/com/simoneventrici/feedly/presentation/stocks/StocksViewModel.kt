@@ -8,6 +8,8 @@ import com.simoneventrici.feedly.commons.DataState
 import com.simoneventrici.feedly.model.Crypto
 import com.simoneventrici.feedly.model.Stock
 import com.simoneventrici.feedly.model.StockData
+import com.simoneventrici.feedly.model.primitives.NewsCategory
+import com.simoneventrici.feedly.persistence.DataStorePreferences
 import com.simoneventrici.feedly.repository.StocksRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -18,17 +20,29 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StocksViewModel @Inject constructor(
-    private val stocksRepository: StocksRepository
+    private val stocksRepository: StocksRepository,
+    private val preferences: DataStorePreferences
 ): ViewModel() {
 
     val allStocks = mutableStateOf<List<Stock>>(emptyList())
     val favouriteStocks = mutableStateOf<DataState<List<StockData>>>(DataState.None())
     val isRefreshing = mutableStateOf(false)
+    val userToken = mutableStateOf("")
 
     init {
+        observeTokenChanges()
         getAllStocks()
-        getFavouriteStocks(Constants.TEST_TOKEN)
     }
+
+    private fun observeTokenChanges() {
+        preferences.tokensFlow.onEach { token ->
+            userToken.value = token ?: ""
+
+            if(token?.isNotBlank() == true)
+                getFavouriteStocks()
+        }.launchIn(viewModelScope)
+    }
+
 
     private fun getAllStocks() {
         viewModelScope.launch {
@@ -36,25 +50,24 @@ class StocksViewModel @Inject constructor(
         }
     }
 
-    fun getFavouriteStocks(authToken: String) {
-        stocksRepository.getUserFavouritesStocks(authToken).onEach {
+    fun getFavouriteStocks() {
+        stocksRepository.getUserFavouritesStocks(userToken.value).onEach {
             favouriteStocks.value = it
-            println(it)
         }.launchIn(viewModelScope)
     }
 
     fun addStocksToFavourite(stocks: List<String>) {
         viewModelScope.launch {
             stocks.forEach { stock ->
-                stocksRepository.addStockToFavourite(Constants.TEST_TOKEN, stock)
+                stocksRepository.addStockToFavourite(userToken.value, stock)
             }
-            getFavouriteStocks(Constants.TEST_TOKEN)
+            getFavouriteStocks()
         }
     }
 
     fun removeFavouriteStock(stock: String) {
         viewModelScope.launch {
-            stocksRepository.removeStockFromFavourite(Constants.TEST_TOKEN, stock)
+            stocksRepository.removeStockFromFavourite(userToken.value, stock)
         }
         val oldList = favouriteStocks.value.data?.toMutableList() ?: mutableListOf()
         oldList.removeIf { it.ticker == stock }

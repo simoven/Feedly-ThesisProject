@@ -13,4 +13,8 @@ sealed class Screen(val route: String) {
     object ManageSoccerTeamsScreen: Screen("manage_soccer_teams")
     object StockScreen: Screen("stocks")
     object AddNewStockScreen: Screen("add_new_stock")
+    object ChooseFavouriteLeagueScreen: Screen("fav_league_screen")
+    object WelcomeScreen: Screen("welcome")
+    object LoginScreen: Screen("login")
+    object SignUpScreen: Screen("sign_up")
 }

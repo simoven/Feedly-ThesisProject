@@ -2,12 +2,14 @@ package com.simoneventrici.feedly.presentation.weather.components
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -39,6 +41,7 @@ fun ChooserTopBar(
             contentDescription = "Back button",
             modifier = Modifier
                 .size(32.dp)
+                .clip(RoundedCornerShape(20.dp))
                 .clickable { navController.popBackStack() }
         )
 
@@ -131,9 +134,7 @@ fun CityChooserScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Spacer(Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(20.dp))
         }
 
         Column(
@@ -144,11 +145,16 @@ fun CityChooserScreen(
         ) {
             if(queryResults is DataState.Success) {
                 queryResults.data?.forEach { geoInfo ->
-                    Spacer(Modifier.height(10.dp))
+                    //Spacer(Modifier.height(10.dp))
                     Row(
                         Modifier
                             .fillMaxWidth()
-                            .clickable { weatherViewModel.saveGeolocalizationAddress(geoInfo); navController.popBackStack();cityQueryText.value = "" }
+                            .clickable {
+                                weatherViewModel.saveGeolocalizationAddress(geoInfo)
+                                navController.popBackStack()
+                                cityQueryText.value = ""
+                            }
+                            .padding(vertical = 12.dp)
                     ) {
                         Text(
                             text = geoInfo.fullLabel,
@@ -156,7 +162,7 @@ fun CityChooserScreen(
                             fontSize = 20.sp,
                         )
                     }
-                    Spacer(Modifier.height(10.dp))
+                    //Spacer(Modifier.height(10.dp))
                     Divider(Modifier.fillMaxWidth())
                 }
             }

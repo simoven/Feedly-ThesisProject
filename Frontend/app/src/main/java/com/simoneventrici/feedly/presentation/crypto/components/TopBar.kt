@@ -30,17 +30,14 @@ fun TopBar(
             .background(LighterBlack).padding(vertical = 10.dp, horizontal = 15.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            Modifier.clip(RoundedCornerShape(20.dp)).clickable { navController.popBackStack() },
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.back_arrow_icon),
-                modifier = Modifier
-                    .size(32.dp),
-                contentDescription = "Back button",
-            )
-        }
+        Image(
+            painter = painterResource(id = R.drawable.back_arrow_icon),
+            modifier = Modifier
+                .size(32.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .clickable { navController.popBackStack() },
+            contentDescription = "Back button",
+        )
         Spacer(modifier = Modifier.width(15.dp))
         Text(
            text = "Crypto",

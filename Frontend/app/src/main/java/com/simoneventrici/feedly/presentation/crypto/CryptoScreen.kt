@@ -28,6 +28,7 @@ fun CryptoScreen(
     cryptoViewModel: CryptoViewModel = hiltViewModel()
 ) {
     val isRefreshing by cryptoViewModel.isRefreshing
+    val userToken = cryptoViewModel.userToken.value
 
     Column(
         modifier = Modifier
@@ -38,7 +39,7 @@ fun CryptoScreen(
     ) {
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing),
-            onRefresh = { cryptoViewModel.fetchFavouritesCrypto(Constants.TEST_TOKEN) }
+            onRefresh = { cryptoViewModel.fetchFavouritesCrypto(userToken) }
         ) {
             Column(
                 Modifier

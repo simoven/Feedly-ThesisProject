@@ -12,9 +12,6 @@ class Constants(
         const val COINGECKO_URL = "https://api.coingecko.com/api/v3/"
         const val WEATHER_API_URL = "https://api.openweathermap.org/data/3.0/"
         const val POSITIONSTACK_URL = "http://api.positionstack.com/v1/"
-
-        // only for test purposes
-        const val TEST_TOKEN = "sOceJk56q9xuPyR9OYjIah9fGK-3goWb-VR4LZDH"
     }
 
     val coinrankingApiKey = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA).metaData["coinrankingApiKey"]

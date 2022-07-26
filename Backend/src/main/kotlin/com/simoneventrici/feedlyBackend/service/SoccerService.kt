@@ -63,8 +63,8 @@ class SoccerService(
 
     fun fetchAllLeaguesStandings() {
         // per ogni lega, fetcho la classifica attuale
-        //allLeagues.forEach { league ->
-        listOf(SoccerLeague(135, "", "")).forEach { league ->
+        allLeagues.forEach { league ->
+        //listOf(SoccerLeague(135, "", "")).forEach { league ->
             val result = footballAPI.getStandingsByLeagueId(league.leagueId, currentYear)
             result?.body?.let {
                 allStandingsByLeagueId[league.leagueId] = it.response[0].league.standings[0].map { st -> st.toLeagueStanding() }

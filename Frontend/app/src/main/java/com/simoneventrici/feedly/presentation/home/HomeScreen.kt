@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.commons.getSystemStatusbarHeightInDp
+import com.simoneventrici.feedly.model.User
 import com.simoneventrici.feedly.model.WeatherIconParser
 import com.simoneventrici.feedly.model.WeatherInfo
 import com.simoneventrici.feedly.presentation.explore.components.ScrollableTopBar
@@ -52,6 +53,7 @@ fun HomeScreen(
     navController: NavController,
     currentWeatherInfo: WeatherInfo?,
     homeViewModel: HomeViewModel = hiltViewModel(),
+    user: User?
 ) {
 
     val recentActivity = homeViewModel.recentActivity.value
@@ -93,7 +95,7 @@ fun HomeScreen(
                     )
                     Spacer(Modifier.height(5.dp))
                     Text(
-                        text = "username",
+                        text = user?.username ?: "",
                         color = WhiteDark1,
                         fontSize = 18.sp
                     )

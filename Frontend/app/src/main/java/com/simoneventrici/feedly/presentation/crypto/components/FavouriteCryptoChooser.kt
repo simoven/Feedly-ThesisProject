@@ -46,19 +46,14 @@ fun ChooseCryptoTopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if(!searchBoxActive.value) {
-            Box(
-                Modifier
+            Image(
+                painter = painterResource(id = R.drawable.back_arrow_icon),
+                modifier = Modifier
+                    .size(32.dp)
                     .clip(RoundedCornerShape(20.dp))
                     .clickable { navController.popBackStack() },
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back_arrow_icon),
-                    modifier = Modifier
-                        .size(32.dp),
-                    contentDescription = "Back button",
-                )
-            }
+                contentDescription = "Back button",
+            )
             Spacer(modifier = Modifier.width(15.dp))
             Text(
                 text = LocalContext.current.getString(R.string.add_crypto_label),
@@ -146,7 +141,7 @@ fun FavouriteCryptoChooser(
                     cryptos
                 ) { idx, crypto ->
                     // controllo se questa crypto è stata aggiunta all'elenco delle crypto scelte
-                    val checked = remember { mutableStateOf(cryptoChoosen.find { it.ticker == crypto.ticker } != null) }
+                    val checked = remember(cryptos.size) { mutableStateOf(cryptoChoosen.find { it.ticker == crypto.ticker } != null) }
 
                     Row(
                         modifier = Modifier
