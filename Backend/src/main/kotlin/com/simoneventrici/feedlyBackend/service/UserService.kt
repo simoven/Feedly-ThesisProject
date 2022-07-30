@@ -45,4 +45,8 @@ class UserService(
         }
         return user
     }
+
+    fun changeUserPassword(token: String, oldPassword: Password, newPassword: Password): Boolean {
+        return userDao.changeUserPassword(token, oldPassword, newPassword)
+    }
 }

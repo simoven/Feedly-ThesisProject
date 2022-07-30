@@ -16,4 +16,8 @@ interface AuthAPI {
 
     @POST("register")
     suspend fun doRegistration(@Body body: RequestBody): Response<ResponseBody>
+
+    @POST("changeUserPassword")
+    suspend fun doUserPasswordChange(@Body body: RequestBody): Response<ResponseBody>
+
 }

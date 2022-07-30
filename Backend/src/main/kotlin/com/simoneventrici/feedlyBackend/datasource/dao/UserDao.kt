@@ -2,6 +2,7 @@ package com.simoneventrici.feedlyBackend.datasource.dao
 
 import com.simoneventrici.feedlyBackend.controller.dto.CredentialsDto
 import com.simoneventrici.feedlyBackend.model.User
+import com.simoneventrici.feedlyBackend.model.primitives.Password
 import com.simoneventrici.feedlyBackend.util.Protocol
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -23,6 +24,8 @@ class UserDao (
     private val getUserTokenQuery = "select access_token from users where username=?"
     private val saveTokenQuery = "update users set access_token=? where username=?"
     private val getUserByTokenQuery = "select * from users where access_token is not null and access_token=?"
+    private val getUserPasswordQuery = "select password from users where access_token is not null and access_token=?"
+    private val changePasswordQuery = "update users set password=? where access_token=?"
 
     override fun getAll(): List<User> {
         val list = mutableListOf<User>()
@@ -73,7 +76,10 @@ class UserDao (
                 token = it.getString(1)
             it.close()
         }
-        return token
+        return if(token == null || token?.isBlank() == true)
+                null
+            else
+                token
     }
 
     fun saveUserToken(username: String, token: String): String {
@@ -110,5 +116,26 @@ class UserDao (
             rs.close()
         }
         return pair
+    }
+
+    fun changeUserPassword(token: String, oldPassword: Password, newPassword: Password): Boolean {
+        val creator = PreparedStatementCreator { conn -> conn.prepareStatement(getUserPasswordQuery)}
+        val setter = PreparedStatementSetter { ps -> ps.setString(1, token) }
+        var hashPw = ""
+        jdbcTemplate.query(creator, setter) { rs ->
+            if(rs.next()) { hashPw = rs.getString(1) }
+            rs.close()
+        }
+        // se la vecchia password corrisponde, la cambio
+        if(BCrypt.checkpw(oldPassword.value, hashPw)) {
+            val updated = jdbcTemplate.update(changePasswordQuery) {
+                it.setString(1, BCrypt.hashpw(newPassword.value, BCrypt.gensalt(12)))
+                it.setString(2, token)
+            }
+
+            // una riga modificata
+            return updated > 0
+        }
+        return false
     }
 }

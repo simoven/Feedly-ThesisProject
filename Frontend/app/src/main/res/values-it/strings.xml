@@ -76,4 +76,24 @@
     <string name="username_email_already_exists">L\'Username o l\'Email esistono già</string>
     <string name="login_error">Errore durante il login, riprova</string>
     <string name="signup_error">Errore durate la registrazione, riprova</string>
+    <string name="signup_successful">Registrazione completata!</string>
+    <string name="profile">Profilo</string>
+    <string name="news_settings">Impostazioni notizie</string>
+    <string name="language_region_interest">Lingua e regioni di interesse</string>
+    <string name="security">Sicurezza</string>
+    <string name="change_password">Cambia password</string>
+    <string name="logout">Esci</string>
+    <string name="old_password">Vecchia password</string>
+    <string name="new_password">Nuova password</string>
+    <string name="confirm_password">Conferma password</string>
+    <string name="invalid_old_password">Vecchia password non valida</string>
+    <string name="invalid_new_password">Nuova password non valida</string>
+    <string name="invalid_confirm_password">password di conferma non valida</string>
+    <string name="new_confirm_password_dont_match">La password vecchia è diversa dalla nuova</string>
+    <string name="old_password_dont_match">La vecchia password è errata</string>
+    <string name="error_password_change">Errore, riprova</string>
+    <string name="password_change_successful">Password cambiata con successo</string>
+    <string name="choose_language">Choose language</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 </resources>

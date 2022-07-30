@@ -1,6 +1,7 @@
 package com.simoneventrici.feedlyBackend.controller
 
 import com.simoneventrici.feedlyBackend.controller.dto.CredentialsDto
+import com.simoneventrici.feedlyBackend.model.primitives.Password
 import com.simoneventrici.feedlyBackend.service.UserService
 import com.simoneventrici.feedlyBackend.util.Protocol
 import org.json.simple.JSONObject
@@ -62,5 +63,20 @@ class AuthController(
                 else -> HttpStatus.FORBIDDEN
             }
         )
+    }
+
+    @PostMapping("changeUserPassword")
+    fun changeUserPassword(@RequestBody obj: JSONObject): ResponseEntity<JSONObject> {
+        val token = obj["Authorization"] as String? ?: throw IllegalStateException("No Authorization token provided")
+        val oldPassword = obj["old_password"] as String? ?: throw IllegalStateException("Old password not provided")
+        val newPassword = obj["new_password"] as String? ?: throw IllegalStateException("New password not provided")
+        val user = userService.checkUserToken(token)
+        if(user != null) {
+            return if(userService.changeUserPassword(token, Password(oldPassword), Password(newPassword)))
+                ResponseEntity(JSONObject().apply { put("msg", "password changed successfully") }, HttpStatus.OK)
+            else
+                ResponseEntity(JSONObject().apply { put("msg", "old password doesn't match") }, HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity(JSONObject().apply { put("msg", "Invalid token provided for authentication") }, HttpStatus.UNAUTHORIZED)
     }
 }

@@ -67,6 +67,22 @@ class AuthRepository(
         }
     }
 
+    suspend fun doUserPasswordChange(token: String, oldPassword: Password, newPassword: Password): Status {
+        val body = JSONObject().apply {
+            put("Authorization", token)
+            put("old_password", oldPassword.value)
+            put("new_password", newPassword.value)
+        }
+        val response = authAPI.doUserPasswordChange(body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
+
+        return if(response.isSuccessful) {
+            Status(code = 200, token = null, errorMsg = null)
+        }
+        else {
+            val responseJson = JSONObject(response.errorBody()?.string() ?: "{}")
+            Status(code = response.code(), errorMsg = responseJson.toMap()["msg"], token = null)
+        }
+    }
 }
 
 

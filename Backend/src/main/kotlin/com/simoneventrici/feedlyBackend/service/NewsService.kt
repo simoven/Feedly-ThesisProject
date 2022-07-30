@@ -1,6 +1,5 @@
 package com.simoneventrici.feedlyBackend.service
 
-import com.simoneventrici.feedlyBackend.datasource.api.NewsAPI
 import com.simoneventrici.feedlyBackend.datasource.dao.NewsDao
 import com.simoneventrici.feedlyBackend.datasource.dto.news.NewsAndReactionsDto
 import com.simoneventrici.feedlyBackend.datasource.dto.news.ReactionsDto
@@ -47,6 +46,7 @@ class NewsService(
         allCategories.forEach { category ->
             val itNews = newsDataSource.getNewsByCategory(category, "it")
             val enNews = newsDataSource.getNewsByCategory(category, "us")
+
             newsByCategory[category.value]?.addAll(itNews.data ?: emptyList())
             newsByCategory[category.value]?.addAll(enNews.data ?: emptyList())
             newsByCategory[category.value]?.distinctBy { it.newsUrl }

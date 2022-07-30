@@ -75,5 +75,25 @@
     <string name="weather">Weather</string>
     <string name="finance">Finance</string>
     <string name="crypto">Crypto</string>
+    <string name="signup_successful">Sign Up successful!</string>
+    <string name="profile">Profile</string>
+    <string name="news_settings">News settings</string>
+    <string name="language_region_interest">Language and region of interest</string>
+    <string name="security">Security</string>
+    <string name="change_password">Change password</string>
+    <string name="logout">Logout</string>
+    <string name="old_password">Old password</string>
+    <string name="new_password">New password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="invalid_old_password">Invalid old password</string>
+    <string name="invalid_new_password">Invalid new password</string>
+    <string name="invalid_confirm_password">Invalid confirm password</string>
+    <string name="new_confirm_password_dont_match">The new and confirm password doesn\'t match</string>
+    <string name="old_password_dont_match">The old password doesn\'t match</string>
+    <string name="error_password_change">Error, please retry</string>
+    <string name="password_change_successful">Password changed successful</string>
+    <string name="choose_language">Choose language</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

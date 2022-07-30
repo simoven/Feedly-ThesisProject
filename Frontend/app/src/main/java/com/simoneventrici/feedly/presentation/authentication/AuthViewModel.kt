@@ -13,6 +13,9 @@ import com.simoneventrici.feedly.model.primitives.Username
 import com.simoneventrici.feedly.persistence.DataStorePreferences
 import com.simoneventrici.feedly.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -29,10 +32,13 @@ class AuthViewModel @Inject constructor(
     // isAuthenticating serve per non far uscire la welcome screen se non sono sicuro se l'utente sia loggato o meno
     val isAuthenticating = mutableStateOf(false)
 
+    val showConfirmDialog = mutableStateOf(false)
+
     // sono gli id dei messaggi di errore nelle risorse
     val usernameErrorCode = mutableStateOf(-1)
     val passwordErrorCode = mutableStateOf(-1)
     val emailErrorCode = mutableStateOf(-1)
+
     val genericErrorCode = mutableStateOf(-1)
 
     init {
@@ -119,13 +125,56 @@ class AuthViewModel @Inject constructor(
             viewModelScope.launch {
                 val resp = authRepository.doRegistration(usernameObj, emailObj, passwordObj)
                 if(resp.code == 200) {
-
+                    showConfirmDialog.value = true
+                    delay(2000)
+                    showConfirmDialog.value = false
                 }
                 else if(resp.code == 409)
                     genericErrorCode.value = R.string.username_email_already_exists
                 else
                     genericErrorCode.value = R.string.signup_error
             }
+        }
+    }
+
+    fun changePassword(oldPassword: String, newPassword: String, confirmPassword: String) {
+        clearErrorMessages()
+
+        val oldPassObj = validatePassword(oldPassword)
+        if(oldPassObj == null) {
+            genericErrorCode.value = R.string.invalid_old_password
+            return
+        }
+
+        val newPassObj = validatePassword(newPassword)
+        if(newPassObj == null) {
+            genericErrorCode.value = R.string.invalid_new_password
+            return
+        }
+
+        val confirmPassObj = validatePassword(confirmPassword)
+        if(confirmPassObj == null) {
+            genericErrorCode.value = R.string.invalid_confirm_password
+            return
+        }
+
+        if(newPassword != confirmPassword) {
+            genericErrorCode.value = R.string.new_confirm_password_dont_match
+            return
+        }
+
+        viewModelScope.launch {
+            val resp = authRepository.doUserPasswordChange(userToken.value, oldPassObj, newPassObj)
+            if(resp.code == 200) {
+                showConfirmDialog.value = true
+                delay(2000)
+                showConfirmDialog.value = false
+            }
+            else if(resp.code == 400)
+                genericErrorCode.value = R.string.old_password_dont_match
+            else
+                genericErrorCode.value = R.string.error_password_change
+
         }
     }
 

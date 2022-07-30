@@ -1,4 +1,4 @@
-package com.simoneventrici.feedly.presentation.authentication
+package com.simoneventrici.feedly.presentation.profile
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -22,23 +22,23 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.commons.getSystemStatusbarHeightInDp
+import com.simoneventrici.feedly.presentation.authentication.AuthViewModel
+import com.simoneventrici.feedly.presentation.authentication.ErrorLabel
 import com.simoneventrici.feedly.presentation.authentication.components.AuthButton
 import com.simoneventrici.feedly.presentation.authentication.components.AuthTextField
 import com.simoneventrici.feedly.presentation.authentication.components.ConfirmDialog
-import com.simoneventrici.feedly.presentation.navigation.Screen
 import com.simoneventrici.feedly.ui.theme.LighterBlack
 import com.simoneventrici.feedly.ui.theme.MainGreen
 import com.simoneventrici.feedly.ui.theme.WhiteColor
-import com.simoneventrici.feedly.ui.theme.WhiteDark2
 
 @Composable
-fun SignupScreen(
-    authViewModel: AuthViewModel,
-    navController: NavController
+fun ChangePasswordScreen(
+    navController: NavController,
+    authViewModel: AuthViewModel
 ) {
-    val usernameText = remember { mutableStateOf("") }
-    val passwordText = remember { mutableStateOf("") }
-    val emailText = remember { mutableStateOf("") }
+    val oldPasswordText = remember { mutableStateOf("") }
+    val newPasswordText = remember { mutableStateOf("") }
+    val confirmPasswordText = remember { mutableStateOf("") }
 
     val labelTextStyle = TextStyle(
         color = WhiteColor,
@@ -78,70 +78,55 @@ fun SignupScreen(
             )
             Spacer(Modifier.width(30.dp))
             Text(
-                text = LocalContext.current.getString(R.string.signup),
+                text = LocalContext.current.getString(R.string.change_password),
                 color = WhiteColor,
-                fontSize = 26.sp,
+                fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
         }
 
         Spacer(modifier = Modifier.weight(0.2f))
 
-        // Username text field
+
         Text(
-            text = "Username",
+            text = LocalContext.current.getString(R.string.old_password),
             style = labelTextStyle,
             modifier = Modifier.padding(horizontal = 10.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
-        AuthTextField(textState = usernameText, onValueChange = { value -> usernameText.value = value} )
-
-        if(authViewModel.usernameErrorCode.value != -1) {
-            ErrorLabel(authViewModel.usernameErrorCode.value)
-        }
+        AuthTextField(textState = oldPasswordText, onValueChange = { value -> oldPasswordText.value = value}, isPasswordField = true )
 
 
         Spacer(Modifier.height(20.dp))
 
-        // E-mail text field
+
         Text(
-            text = "E-mail",
+            text = LocalContext.current.getString(R.string.new_password),
             style = labelTextStyle,
             modifier = Modifier.padding(horizontal = 10.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
-        AuthTextField(textState = emailText, onValueChange = { value -> emailText.value = value} )
-
-        if(authViewModel.emailErrorCode.value != -1) {
-            ErrorLabel(authViewModel.emailErrorCode.value)
-        }
+        AuthTextField(textState = newPasswordText, onValueChange = { value -> newPasswordText.value = value}, isPasswordField = true )
 
 
         Spacer(Modifier.height(20.dp))
 
-        // Password text field
         Text(
-            text = "Password",
+            text = LocalContext.current.getString(R.string.confirm_password),
             style = labelTextStyle,
             modifier = Modifier.padding(horizontal = 10.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
-        AuthTextField(textState = passwordText, onValueChange = { value -> passwordText.value = value}, isPasswordField = true )
-
-        if(authViewModel.passwordErrorCode.value != -1) {
-            ErrorLabel(authViewModel.passwordErrorCode.value)
-        }
-
+        AuthTextField(textState = confirmPasswordText, onValueChange = { value -> confirmPasswordText.value = value}, isPasswordField = true )
 
 
         Spacer(modifier = Modifier.weight(0.4f))
 
-        // Signup button
         AuthButton(
-            text = LocalContext.current.getString(R.string.signup),
+            text = LocalContext.current.getString(R.string.change_password),
             backgroundColor = MainGreen,
             onClick = {
-                authViewModel.doSignup(usernameText.value, emailText.value, passwordText.value)
+                authViewModel.changePassword(oldPasswordText.value, newPasswordText.value, confirmPasswordText.value)
             }
         )
 
@@ -155,40 +140,11 @@ fun SignupScreen(
             }
         }
 
-
-
-        Spacer(Modifier.height(10.dp))
-
-        // la riga che rimanda alla login page
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = LocalContext.current.getString(R.string.already_have_account),
-                color = WhiteDark2,
-                fontSize = 16.sp
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(
-                text = LocalContext.current.getString(R.string.login),
-                color = WhiteColor,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.clickable {
-                    navController.popBackStack()
-                    navController.navigate(Screen.LoginScreen.route)
-                    authViewModel.clearErrorMessages()
-                }
-            )
-        }
-
         Spacer(modifier = Modifier.weight(1.2f))
     }
 
 
     if(authViewModel.showConfirmDialog.value) {
-        ConfirmDialog(text = LocalContext.current.getString(R.string.signup_successful))
+        ConfirmDialog(text = LocalContext.current.getString(R.string.password_change_successful))
     }
 }

@@ -14,6 +14,7 @@ import com.simoneventrici.feedly.repository.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,12 +25,14 @@ class ExploreViewModel @Inject constructor(
 
     // contengono tutti i dati relativi alle notizie, se sono stati fetchate, se ci sono stati errori ecc
     val currentNewsByCategory = mutableStateOf<Map<String, DataState<List<NewsAndReactions>>>>(emptyMap())
+    val favNewsLanguage = mutableStateOf("en")
 
     // questa mappa contiene, per ogni categoria di notizie, l'ultima notizia per cui è servito un aggiornamento
     // delle reaction in seguito all'inserimento da parte dell'utente di una reaction
     // serve per fare la ricomposizione delle pagine
     val latestNewsIdReactionAddedByCategory = mutableStateOf<Map <String, Pair<Int, String>>>(emptyMap())
     val userToken = mutableStateOf("")
+    val isRefreshing = mutableStateOf(false)
 
     private var lastScrollIndex = 0
     private val _scrollUp = MutableLiveData(false)
@@ -38,21 +41,44 @@ class ExploreViewModel @Inject constructor(
 
     init {
         observeTokenChanges()
+        observeNewsLanguages()
     }
 
     private fun observeTokenChanges() {
         preferences.tokensFlow.onEach { token ->
             userToken.value = token ?: ""
+
             if(token?.isNotBlank() == true)
-                getNewsByCategory(token, NewsCategory.Business(), "en")
+                currentNewsByCategory.value = emptyMap()
+
         }.launchIn(viewModelScope)
     }
 
-    fun getNewsByCategory(token: String, category: NewsCategory, language: String) {
+    private fun observeNewsLanguages() {
+        preferences.newsLangFlow.onEach { language ->
+            if(language != favNewsLanguage.value) {
+                favNewsLanguage.value = language
+                currentNewsByCategory.value = emptyMap()
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun refreshNews(category: NewsCategory) {
+        getNewsByCategory(userToken.value, category = category)
+        isRefreshing.value = false
+    }
+
+    fun saveNewsLanguage(lang: String) {
+        viewModelScope.launch {
+            preferences.saveNewsLanguage(lang)
+        }
+    }
+
+    fun getNewsByCategory(token: String, category: NewsCategory) {
         newsRepository.getNewsByCategory(
             authToken = token,
             category = category,
-            language = language
+            language = favNewsLanguage.value
         ).onEach {
             val currentMap = currentNewsByCategory.value.toMutableMap()
             currentMap[category.value] = it

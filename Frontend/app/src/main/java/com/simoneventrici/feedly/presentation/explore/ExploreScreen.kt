@@ -29,6 +29,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.commons.DataState
 import com.simoneventrici.feedly.commons.getSystemStatusbarHeightInDp
@@ -47,7 +49,8 @@ import com.simoneventrici.feedly.ui.theme.WhiteDark1
 // la uso per evitare di ricomporre ogni volta la stessa pagina, controllando se lo stato era già success
 data class PageState(
     val content: @Composable () -> Unit,
-    val state: LoadingState
+    val state: LoadingState,
+    val onRefresh: () -> Unit
 ) {
     sealed class LoadingState {
         object Success : LoadingState()
@@ -69,6 +72,7 @@ fun ExploreScreen(
     val currentCategory = allCategory[pagerState.currentPage]
     val scrollUpState = newsViewModel.scrollUp.observeAsState()
     val userToken = newsViewModel.userToken.value
+    val isRefreshing = newsViewModel.isRefreshing.value
 
     val pagesMap = remember { mutableMapOf<String, PageState>() }
 
@@ -77,13 +81,13 @@ fun ExploreScreen(
 
     // se non ho le notizie di questa categoria, le fetcho
     if(newsByCategoryState.value[currentCategory.value] == null)
-        newsViewModel.getNewsByCategory(userToken, currentCategory, "en")
+        newsViewModel.getNewsByCategory(userToken, currentCategory)
 
     // fetcho le notizie della categoria immediatamente successiva, per avere una transizione pulita nello swiper
     // se non è stato già richiesto il fetch per quella categoria9
     allCategory.getOrNull(pagerState.currentPage + 1)?.run {
         if(newsByCategoryState.value[this.value] == null) {
-            newsViewModel.getNewsByCategory(userToken, allCategory[pagerState.currentPage + 1], "en")
+            newsViewModel.getNewsByCategory(userToken, allCategory[pagerState.currentPage + 1])
         }
     }
 
@@ -113,7 +117,7 @@ fun ExploreScreen(
                                 .background(Color.Transparent)
                                 .pointerInput(Unit) {
                                     detectTapGestures(
-                                        onTap = { idxEmojiBarOpen.value = -1}
+                                        onTap = { idxEmojiBarOpen.value = -1 }
                                     )
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -152,7 +156,8 @@ fun ExploreScreen(
                     }
                     pagesMap[categoryStr] = PageState(
                         content = page,
-                        state = PageState.LoadingState.Success
+                        state = PageState.LoadingState.Success,
+                        onRefresh = { newsViewModel.refreshNews(NewsCategory.parse(categoryStr)) }
                     )
                 }
 
@@ -160,21 +165,30 @@ fun ExploreScreen(
                 is DataState.Error -> {
                     pagesMap[categoryStr] = PageState(
                         content = @Composable {
-                            Box(
+                            Column(
                                 Modifier
                                     .fillMaxSize()
-                                    .padding(horizontal = 20.dp),
-                                contentAlignment = Alignment.Center
+                                    .verticalScroll(rememberScrollState())
                             ) {
-                                Text(
-                                    text = state.errorMsg ?: LocalContext.current.getString(R.string.unexpected_error_msg),
-                                    color = WhiteDark1,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.SemiBold
-                                )
+                                Spacer(modifier = Modifier.weight(1f))
+                                Box(
+                                    Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 20.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = state.errorMsg ?: LocalContext.current.getString(R.string.unexpected_error_msg),
+                                        color = WhiteDark1,
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                                Spacer(modifier = Modifier.weight(1f))
                             }
                         },
-                        state = PageState.LoadingState.Error
+                        state = PageState.LoadingState.Error,
+                        onRefresh = { newsViewModel.refreshNews(NewsCategory.parse(categoryStr)) }
                     )
                 }
 
@@ -196,7 +210,8 @@ fun ExploreScreen(
                                 }
                             }
                         },
-                        state = PageState.LoadingState.Loading
+                        state = PageState.LoadingState.Loading,
+                        onRefresh = { newsViewModel.isRefreshing.value = false }
                     )
                 }
                 else -> {}
@@ -232,7 +247,8 @@ fun ExploreScreen(
             tabList = allCategory.map { it.value.replaceFirstChar { ch -> ch.uppercase() } },
             padding = PaddingValues(top = 52.dp),
             allPages = pagesMap,
-            scrollUpState = scrollUpState
+            scrollUpState = scrollUpState,
+            isRefreshing = isRefreshing
         )
 
     }

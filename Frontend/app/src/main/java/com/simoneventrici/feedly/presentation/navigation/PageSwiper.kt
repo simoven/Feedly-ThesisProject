@@ -15,6 +15,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.pager.*
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.simoneventrici.feedly.model.primitives.NewsCategory
 import com.simoneventrici.feedly.presentation.explore.PageState
 import com.simoneventrici.feedly.ui.theme.*
 import kotlinx.coroutines.launch
@@ -26,7 +29,8 @@ fun PageSwiper(
     tabList: List<String>,
     padding: PaddingValues,
     allPages: Map<String, PageState>,
-    scrollUpState: State<Boolean?>
+    scrollUpState: State<Boolean?>,
+    isRefreshing: Boolean
 ) {
     val coroutineScreen = rememberCoroutineScope()
     val position by animateFloatAsState(if (scrollUpState.value == true) -150f else 0f)
@@ -99,7 +103,12 @@ fun PageSwiper(
                 .fillMaxSize()
                 .background(Color.Transparent)
         ) {
-            allPages[tabList[it].replaceFirstChar { ch -> ch.lowercase() }]?.content?.invoke()
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+                onRefresh = { allPages[tabList[it].replaceFirstChar { ch -> ch.lowercase() }]?.onRefresh?.invoke() }
+            ) {
+                allPages[tabList[it].replaceFirstChar { ch -> ch.lowercase() }]?.content?.invoke()
+            }
         }
     }
 }
