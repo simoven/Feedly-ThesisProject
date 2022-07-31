@@ -20,4 +20,10 @@ interface AuthAPI {
     @POST("changeUserPassword")
     suspend fun doUserPasswordChange(@Body body: RequestBody): Response<ResponseBody>
 
+    @POST("logout")
+    suspend fun doUserLogout(@Body body: RequestBody)
+
+    @POST("googleLogin")
+    suspend fun doGoogleLogin(@Body body: RequestBody): Response<ResponseBody>
+
 }

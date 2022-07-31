@@ -14,4 +14,7 @@ class Properties {
 
     @Value("\${api.finance.key}")
     lateinit var financeApiKey: String
+
+    @Value("\${google.client_id}")
+    lateinit var googleClientId: String
 }

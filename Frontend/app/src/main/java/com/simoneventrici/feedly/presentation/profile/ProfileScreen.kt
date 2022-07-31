@@ -144,14 +144,16 @@ fun ProfileScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            SettingsTitle(text = LocalContext.current.getString(R.string.security))
-            Spacer(Modifier.height(10.dp))
-            Text(
-                text = LocalContext.current.getString(R.string.change_password),
-                color = WhiteColor,
-                fontSize = 18.sp,
-                modifier = Modifier.clickable { navController.navigate(Screen.PasswordChangeScreen.route) }
-            )
+            if(!authViewModel.isGoogleAccount.value) {
+                SettingsTitle(text = LocalContext.current.getString(R.string.security))
+                Spacer(Modifier.height(10.dp))
+                Text(
+                    text = LocalContext.current.getString(R.string.change_password),
+                    color = WhiteColor,
+                    fontSize = 18.sp,
+                    modifier = Modifier.clickable { navController.navigate(Screen.PasswordChangeScreen.route) }
+                )
+            }
 
 
             Spacer(Modifier.weight(1f))

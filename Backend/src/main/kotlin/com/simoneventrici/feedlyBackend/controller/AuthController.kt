@@ -1,19 +1,25 @@
 package com.simoneventrici.feedlyBackend.controller
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
+import com.google.api.client.http.javanet.NetHttpTransport
+import com.google.api.client.json.gson.GsonFactory
 import com.simoneventrici.feedlyBackend.controller.dto.CredentialsDto
 import com.simoneventrici.feedlyBackend.model.primitives.Password
 import com.simoneventrici.feedlyBackend.service.UserService
+import com.simoneventrici.feedlyBackend.util.Properties
 import com.simoneventrici.feedlyBackend.util.Protocol
 import org.json.simple.JSONObject
 import org.postgresql.util.PSQLException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/auth")
 class AuthController(
-    val userService: UserService
+    val userService: UserService,
+    val properties: Properties
 ) {
 
     @ExceptionHandler(IllegalStateException::class)
@@ -73,10 +79,41 @@ class AuthController(
         val user = userService.checkUserToken(token)
         if(user != null) {
             return if(userService.changeUserPassword(token, Password(oldPassword), Password(newPassword)))
-                ResponseEntity(JSONObject().apply { put("msg", "password changed successfully") }, HttpStatus.OK)
+                ResponseEntity(JSONObject().apply { put("msg", "Password changed successfully") }, HttpStatus.OK)
             else
-                ResponseEntity(JSONObject().apply { put("msg", "old password doesn't match") }, HttpStatus.BAD_REQUEST)
+                ResponseEntity(JSONObject().apply { put("msg", "Old password doesn't match") }, HttpStatus.BAD_REQUEST)
         }
         return ResponseEntity(JSONObject().apply { put("msg", "Invalid token provided for authentication") }, HttpStatus.UNAUTHORIZED)
+    }
+
+    @PostMapping("logout")
+    fun doLogout(@RequestBody obj: JSONObject): ResponseEntity<JSONObject> {
+        val token = obj["Authorization"] as String? ?: throw IllegalStateException("No Authorization token provided")
+        val user = userService.checkUserToken(token)
+        return if(user != null) {
+            userService.doLogout(user)
+            ResponseEntity(JSONObject().apply { put("msg", "Logout successful") }, HttpStatus.OK)
+        } else {
+            ResponseEntity(JSONObject().apply { put("msg", "Error during logout") }, HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    @PostMapping("googleLogin")
+    fun handleGoogleLogin(@RequestBody obj: JSONObject): ResponseEntity<JSONObject> {
+        val idTokenString = obj["google_token"] as String? ?: throw IllegalStateException("No google token provided")
+
+        val verifier = GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())
+            .setAudience(Collections.singletonList(properties.googleClientId))
+            .build()
+
+        val idToken = verifier.verify(idTokenString)
+        return if (idToken != null) {
+            val payload = idToken.payload
+            val token = userService.doGoogleLogin(payload.email)
+
+            ResponseEntity(JSONObject().apply { put("Authorization", token) }, HttpStatus.OK)
+        } else {
+            ResponseEntity(JSONObject().apply { put("msg", "Inavlid token id") }, HttpStatus.BAD_REQUEST)
+        }
     }
 }

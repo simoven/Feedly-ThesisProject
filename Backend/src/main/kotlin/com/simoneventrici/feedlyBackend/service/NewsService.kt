@@ -9,6 +9,9 @@ import com.simoneventrici.feedlyBackend.model.News.Category
 import com.simoneventrici.feedlyBackend.model.User
 import com.simoneventrici.feedlyBackend.model.primitives.Emoji
 import org.springframework.stereotype.Service
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 @Service
 class NewsService(
@@ -32,6 +35,7 @@ class NewsService(
         Category.Technology())
 
     private val newsByCategory: MutableMap<String, MutableCollection<News>> = mutableMapOf()
+    private val lock = ReentrantReadWriteLock(true)
 
     init {
         //Carico tutte le notizie dal database e le divido per categoria
@@ -47,9 +51,11 @@ class NewsService(
             val itNews = newsDataSource.getNewsByCategory(category, "it")
             val enNews = newsDataSource.getNewsByCategory(category, "us")
 
-            newsByCategory[category.value]?.addAll(itNews.data ?: emptyList())
-            newsByCategory[category.value]?.addAll(enNews.data ?: emptyList())
-            newsByCategory[category.value]?.distinctBy { it.newsUrl }
+            lock.write {
+                newsByCategory[category.value]?.addAll(itNews.data ?: emptyList())
+                newsByCategory[category.value]?.addAll(enNews.data ?: emptyList())
+                newsByCategory[category.value]?.distinctBy { it.newsUrl }
+            }
 
             itNews.data?.forEach { newsDao.save(it) }
             enNews.data?.forEach { newsDao.save(it) }
@@ -58,15 +64,20 @@ class NewsService(
 
     // restituisco le notizie già fetchate in precedenza
     fun getAllCurrentNewsByCategory(category: Category, language: String, user: User): Collection<NewsAndReactionsDto> {
-        return newsByCategory[category.value]
-            ?.filter { it.language == language }
-            ?.sortedBy { it.publishedDate }
-            ?.reversed()
-            ?.map {
-                // mappo ogni notizia all'oggetto che la contiene insieme alle reazioni
-                val reactions = newsDao.getNewsReactions(it.getId(), user)
-                NewsAndReactionsDto(news = it, reactions = reactions.newsReactions, userReaction = reactions.userReaction)
-            } ?: emptyList()
+        lock.read {
+            return newsByCategory[category.value]
+                ?.filter { it.language == language }
+                ?.sortedByDescending { it.publishedDate }
+                ?.map {
+                    // mappo ogni notizia all'oggetto che la contiene insieme alle reazioni
+                    val reactions = newsDao.getNewsReactions(it.getId(), user)
+                    NewsAndReactionsDto(
+                        news = it,
+                        reactions = reactions.newsReactions,
+                        userReaction = reactions.userReaction
+                    )
+                } ?: emptyList()
+        }
     }
 
     fun addReactionToNews(newsId: Int, user: User, emoji: Emoji): ReactionsDto {

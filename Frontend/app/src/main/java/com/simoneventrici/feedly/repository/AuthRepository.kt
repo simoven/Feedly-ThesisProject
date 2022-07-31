@@ -83,6 +83,25 @@ class AuthRepository(
             Status(code = response.code(), errorMsg = responseJson.toMap()["msg"], token = null)
         }
     }
+
+    suspend fun doUserLogout(token: String) {
+        val body = JSONObject().apply {
+            put("Authorization", token)
+        }
+        authAPI.doUserLogout(body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
+    }
+
+    suspend fun doGoogleLogin(tokenId: String): String {
+        val body = JSONObject().apply {
+            put("google_token", tokenId)
+        }
+        val response = authAPI.doGoogleLogin(body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
+        return if(response.isSuccessful) {
+            val responseJson = JSONObject(response.body()?.string() ?: "{}")
+            responseJson.toMap()["Authorization"] ?: ""
+        }
+        else ""
+    }
 }
 
 

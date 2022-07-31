@@ -21,7 +21,7 @@ class UserService(
     }
 
     fun getUserToken(username: String): String {
-        var token = userDao.getUserToken(username)
+        val token = userDao.getUserToken(username)
         return token ?: userDao.saveUserToken(username = username, token = Util.generateNewToken())
     }
 
@@ -36,9 +36,10 @@ class UserService(
 
     fun checkUserToken(token: String): User? {
         var user: User? = null
+        val isGoogleAccount = userDao.isGoogleAccount(token)
         userDao.tryTokenLogin(token)?.let {
             user = User(
-                username = Username(it.first),
+                username = Username(it.first, checkValidation = !isGoogleAccount),
                 email = Email(it.second),
                 password = Password("******", checkValidation = false)
             )
@@ -48,5 +49,16 @@ class UserService(
 
     fun changeUserPassword(token: String, oldPassword: Password, newPassword: Password): Boolean {
         return userDao.changeUserPassword(token, oldPassword, newPassword)
+    }
+
+    fun doGoogleLogin(googleEmail: String): String {
+        userDao.checkGoogleLogin(googleEmail)
+        val username = googleEmail.split("@")[0]
+        val token = userDao.getUserToken(username)
+        return token ?: userDao.saveUserToken(username = username, token = Util.generateNewToken())
+    }
+
+    fun doLogout(user: User) {
+        userDao.logoutUser(user)
     }
 }

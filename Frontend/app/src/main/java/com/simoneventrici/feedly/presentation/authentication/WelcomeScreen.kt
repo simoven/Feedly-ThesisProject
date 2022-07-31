@@ -1,9 +1,11 @@
 package com.simoneventrici.feedly.presentation.authentication
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,6 +16,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.tasks.Task
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.presentation.authentication.components.AuthButton
 import com.simoneventrici.feedly.presentation.authentication.components.GoogleButton
@@ -22,8 +28,21 @@ import com.simoneventrici.feedly.ui.theme.*
 
 @Composable
 fun WelcomeScreen(
-    navController: NavController
+    navController: NavController,
+    googleClient: GoogleSignInClient,
+    authViewModel: AuthViewModel
 ) {
+    val startForResult = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data
+                if (result.data != null) {
+                    val task: Task<GoogleSignInAccount> =
+                        GoogleSignIn.getSignedInAccountFromIntent(intent)
+                    authViewModel.handleGoogleLogin(task.result.idToken ?: "")
+                }
+            }
+        }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -95,7 +114,9 @@ fun WelcomeScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         GoogleButton(
-            onClick = {}
+            onClick = {
+                startForResult.launch(googleClient.signInIntent)
+            }
         )
 
         Spacer(modifier = Modifier.weight(0.8f))

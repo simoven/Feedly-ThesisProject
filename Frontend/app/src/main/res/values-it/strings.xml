@@ -93,7 +93,9 @@
     <string name="old_password_dont_match">La vecchia password è errata</string>
     <string name="error_password_change">Errore, riprova</string>
     <string name="password_change_successful">Password cambiata con successo</string>
-    <string name="choose_language">Choose language</string>
-    <string name="confirm">Confirm</string>
-    <string name="cancel">Cancel</string>
+    <string name="choose_language">Scegli lingua</string>
+    <string name="confirm">Conferma</string>
+    <string name="cancel">Annulla</string>
+
+    <string name="gcp_id">600389690177-n462hj09iikdm7qbcnbrq4ohb292htr3.apps.googleusercontent.com</string>
 </resources>

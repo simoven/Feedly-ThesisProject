@@ -19,6 +19,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.sebaslogen.resaca.hilt.hiltViewModelScoped
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.presentation.authentication.AuthViewModel
@@ -54,7 +55,7 @@ data class NavigationItem(
 )
 
 @Composable
-fun AppRouter() {
+fun AppRouter(googleClient: GoogleSignInClient) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val userState = authViewModel.userState.value
     val isAuthenticating = authViewModel.isAuthenticating.value
@@ -63,7 +64,7 @@ fun AppRouter() {
 
     if(!isAuthenticating) {
         if (!authenticated) {
-            AuthenticationNavigator(authViewModel)
+            AuthenticationNavigator(authViewModel, googleClient)
         } else {
             MainScreen(authViewModel)
         }
@@ -179,7 +180,8 @@ fun Navigator(
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AuthenticationNavigator(
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    googleClient: GoogleSignInClient
 ) {
     val navController = rememberAnimatedNavController()
     val animationSpec = tween<IntOffset>(durationMillis = 100, easing = LinearEasing)
@@ -189,7 +191,7 @@ fun AuthenticationNavigator(
             route = Screen.WelcomeScreen.route,
             popEnterTransition = { fadeIn(initialAlpha = 0.5f) },
         ) {
-            WelcomeScreen(navController = navController)
+            WelcomeScreen(navController = navController, googleClient = googleClient, authViewModel = authViewModel)
         }
 
         composable(

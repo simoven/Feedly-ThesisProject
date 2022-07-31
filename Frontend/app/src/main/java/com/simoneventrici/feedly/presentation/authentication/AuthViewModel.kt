@@ -14,8 +14,6 @@ import com.simoneventrici.feedly.persistence.DataStorePreferences
 import com.simoneventrici.feedly.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -31,6 +29,7 @@ class AuthViewModel @Inject constructor(
     val userState: MutableState<User?> = mutableStateOf(null)
     // isAuthenticating serve per non far uscire la welcome screen se non sono sicuro se l'utente sia loggato o meno
     val isAuthenticating = mutableStateOf(false)
+    val isGoogleAccount = mutableStateOf(false)
 
     val showConfirmDialog = mutableStateOf(false)
 
@@ -178,9 +177,23 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun handleGoogleLogin(idToken: String) {
+        if(idToken.isBlank()) return
+
+        viewModelScope.launch {
+            val token = authRepository.doGoogleLogin(idToken)
+            preferences.saveToken(token)
+
+            if(token.isNotBlank())
+                isGoogleAccount.value = true
+        }
+    }
+
     fun doLogout() {
         viewModelScope.launch {
+            authRepository.doUserLogout(userToken.value)
             preferences.saveToken("")
+            isGoogleAccount.value = false
         }
     }
 

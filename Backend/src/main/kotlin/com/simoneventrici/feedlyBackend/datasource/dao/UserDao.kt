@@ -5,7 +5,6 @@ import com.simoneventrici.feedlyBackend.model.User
 import com.simoneventrici.feedlyBackend.model.primitives.Password
 import com.simoneventrici.feedlyBackend.util.Protocol
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.PreparedStatementCreator
 import org.springframework.jdbc.core.PreparedStatementSetter
@@ -18,7 +17,7 @@ class UserDao (
 ): Dao<User> {
 
     private val getAllQuery = "select * from users"
-    private val saveUserQuery = "insert into users values (?,?,?, null)"
+    private val saveUserQuery = "insert into users values (?,?,?, null, false)"
     private val deleteUserQuery = "delete from users where username=?"
     private val checkUserCredentialsQuery = "select password from users where username=?"
     private val getUserTokenQuery = "select access_token from users where username=?"
@@ -26,6 +25,10 @@ class UserDao (
     private val getUserByTokenQuery = "select * from users where access_token is not null and access_token=?"
     private val getUserPasswordQuery = "select password from users where access_token is not null and access_token=?"
     private val changePasswordQuery = "update users set password=? where access_token=?"
+    private val logoutUserQuery = "update users set access_token='' where username=?"
+    private val checkGoogleAccountExistsQuery = "select * from users where \"e-mail\"=? and is_google_account=true"
+    private val registerGoogleAccount = "insert into users values(?,?,'',null,true)"
+    private val isGoogleAccountQuery = "select is_google_account from users where access_token is not null and access_token=?"
 
     override fun getAll(): List<User> {
         val list = mutableListOf<User>()
@@ -76,7 +79,7 @@ class UserDao (
                 token = it.getString(1)
             it.close()
         }
-        return if(token == null || token?.isBlank() == true)
+        return if(token?.isBlank() == true)
                 null
             else
                 token
@@ -118,6 +121,19 @@ class UserDao (
         return pair
     }
 
+    fun isGoogleAccount(token: String): Boolean {
+        val creator = PreparedStatementCreator { conn -> conn.prepareStatement(isGoogleAccountQuery)}
+        val setter = PreparedStatementSetter { ps -> ps.setString(1, token) }
+        var isGoogleAccount = false
+        jdbcTemplate.query(creator, setter) {
+            if(it.next()) {
+                isGoogleAccount = it.getBoolean(1)
+            }
+            it.close()
+        }
+        return isGoogleAccount
+    }
+
     fun changeUserPassword(token: String, oldPassword: Password, newPassword: Password): Boolean {
         val creator = PreparedStatementCreator { conn -> conn.prepareStatement(getUserPasswordQuery)}
         val setter = PreparedStatementSetter { ps -> ps.setString(1, token) }
@@ -137,5 +153,30 @@ class UserDao (
             return updated > 0
         }
         return false
+    }
+
+    fun checkGoogleLogin(googleEmail: String) {
+        val creator = PreparedStatementCreator { it.prepareStatement(checkGoogleAccountExistsQuery) }
+        val setter = PreparedStatementSetter { it.setString(1, googleEmail) }
+        var exists = false
+        jdbcTemplate.query(creator, setter) {
+            exists = it.next()
+            it.close()
+        }
+
+        if(!exists) {
+            jdbcTemplate.execute(registerGoogleAccount) {
+                it.setString(1, googleEmail.split("@")[0])
+                it.setString(2, googleEmail)
+                it.execute()
+            }
+        }
+    }
+
+    fun logoutUser(user: User) {
+        jdbcTemplate.execute(logoutUserQuery) {
+            it.setString(1, user.getUsername())
+            it.execute()
+        }
     }
 }
