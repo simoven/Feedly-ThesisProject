@@ -1,5 +1,7 @@
 package com.simoneventrici.feedly.repository
 
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import com.simoneventrici.feedly.model.User
 import com.simoneventrici.feedly.model.primitives.Email
 import com.simoneventrici.feedly.model.primitives.Password
@@ -91,16 +93,25 @@ class AuthRepository(
         authAPI.doUserLogout(body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
     }
 
-    suspend fun doGoogleLogin(tokenId: String): String {
+    suspend fun doGoogleLogin(tokenId: String): Status {
         val body = JSONObject().apply {
             put("google_token", tokenId)
         }
         val response = authAPI.doGoogleLogin(body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
         return if(response.isSuccessful) {
             val responseJson = JSONObject(response.body()?.string() ?: "{}")
-            responseJson.toMap()["Authorization"] ?: ""
+            Status(code = 200, token = responseJson.toMap()["Authorization"] ?: "", errorMsg = null)
         }
-        else ""
+        else
+            Status(code = response.code(), token = null, errorMsg = null)
+    }
+
+    suspend fun doPasswordReset(email: Email): Boolean {
+        val body = JSONObject().apply {
+            put("email", email.value)
+        }
+        val response = authAPI.resetPassword(body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
+        return response.isSuccessful
     }
 }
 

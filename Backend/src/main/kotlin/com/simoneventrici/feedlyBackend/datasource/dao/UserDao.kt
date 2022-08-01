@@ -2,6 +2,7 @@ package com.simoneventrici.feedlyBackend.datasource.dao
 
 import com.simoneventrici.feedlyBackend.controller.dto.CredentialsDto
 import com.simoneventrici.feedlyBackend.model.User
+import com.simoneventrici.feedlyBackend.model.primitives.Email
 import com.simoneventrici.feedlyBackend.model.primitives.Password
 import com.simoneventrici.feedlyBackend.util.Protocol
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,6 +30,7 @@ class UserDao (
     private val checkGoogleAccountExistsQuery = "select * from users where \"e-mail\"=? and is_google_account=true"
     private val registerGoogleAccount = "insert into users values(?,?,'',null,true)"
     private val isGoogleAccountQuery = "select is_google_account from users where access_token is not null and access_token=?"
+    private val changePasswordByEmailQuery = "update users set password=? where \"e-mail\"=? and is_google_account=false"
 
     override fun getAll(): List<User> {
         val list = mutableListOf<User>()
@@ -178,5 +180,13 @@ class UserDao (
             it.setString(1, user.getUsername())
             it.execute()
         }
+    }
+
+    fun changeUserPasswordByEmail(mail: Email, password: Password): Boolean {
+        return jdbcTemplate.update(changePasswordByEmailQuery) {
+            it.setString(1, BCrypt.hashpw(password.value, BCrypt.gensalt(12)))
+            it.setString(2, mail.value)
+            it.execute()
+        } > 0
     }
 }

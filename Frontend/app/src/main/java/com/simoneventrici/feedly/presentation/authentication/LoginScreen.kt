@@ -155,6 +155,29 @@ fun LoginScreen(
         }
 
         Spacer(Modifier.height(10.dp))
+
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = LocalContext.current.getString(R.string.forgot_password),
+                color = WhiteDark2,
+                fontSize = 16.sp
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = LocalContext.current.getString(R.string.reset_password),
+                color = WhiteColor,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.clickable { navController.popBackStack(); navController.navigate(Screen.PasswordResetScreen.route); authViewModel.clearErrorMessages() }
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
         // la riga che rimanda alla sign up page
         Row(
             Modifier.fillMaxWidth(),
@@ -175,7 +198,5 @@ fun LoginScreen(
                 modifier = Modifier.clickable { navController.popBackStack(); navController.navigate(Screen.SignUpScreen.route); authViewModel.clearErrorMessages() }
             )
         }
-
-        Spacer(modifier = Modifier.weight(1.2f))
     }
 }

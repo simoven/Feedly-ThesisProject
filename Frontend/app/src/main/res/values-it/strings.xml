@@ -15,14 +15,6 @@
     <string name="remove_reaction_part1">Hai rimosso la reazione</string>
     <string name="adding_reaction_part2">alla notizia</string>
     <string name="remove_reaction_part2">dalla notizia</string>
-    <string name="adding_ticker_part1">Aggiunto</string>
-    <string name="remove_ticker_part1">Rimosso</string>
-    <string name="adding_cripto_part2">alle tue crypto preferite</string>
-    <string name="remove_cripto_part2">dalle tue crypto preferite</string>
-    <string name="adding_asset_part2">ai tuoi asset preferiti</string>
-    <string name="remove_asset_part2">dai tuoi asset preferiti</string>
-    <string name="adding_team_part2">alle tue squadre preferite</string>
-    <string name="remove_team_part2">dalle tue squadre preferite</string>
     <string name="global_stats">Statistiche Globali</string>
     <string name="n_coins">N° di crypto</string>
     <string name="total_volume_24h">Volume totale 24h</string>
@@ -88,7 +80,7 @@
     <string name="confirm_password">Conferma password</string>
     <string name="invalid_old_password">Vecchia password non valida</string>
     <string name="invalid_new_password">Nuova password non valida</string>
-    <string name="invalid_confirm_password">password di conferma non valida</string>
+    <string name="invalid_confirm_password">Password di conferma non valida</string>
     <string name="new_confirm_password_dont_match">La password vecchia è diversa dalla nuova</string>
     <string name="old_password_dont_match">La vecchia password è errata</string>
     <string name="error_password_change">Errore, riprova</string>
@@ -96,6 +88,17 @@
     <string name="choose_language">Scegli lingua</string>
     <string name="confirm">Conferma</string>
     <string name="cancel">Annulla</string>
+    <string name="forgot_password">Password dimenticata ?</string>
+    <string name="reset_password">Reset password</string>
+    <string name="email_sent">Email inviata!</string>
+    <string name="email_already_exists">Questa email è già registrata</string>
+    <string name="technology">Tecnologia</string>
+    <string name="business">Finanza</string>
+    <string name="general">Generale</string>
+    <string name="entertainment">Intrattenimento</string>
+    <string name="health">Salute</string>
+    <string name="science">Scienza</string>
+    <string name="sport">Sport</string>
 
     <string name="gcp_id">600389690177-n462hj09iikdm7qbcnbrq4ohb292htr3.apps.googleusercontent.com</string>
 </resources>

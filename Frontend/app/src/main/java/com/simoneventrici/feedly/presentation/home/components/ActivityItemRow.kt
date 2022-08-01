@@ -34,30 +34,6 @@ fun activityTypeParse(activityType: RecentActivity.ActivityType, isPart1: Boolea
                 if(isPart1) context.getString(R.string.remove_reaction_part1) else context.getString(R.string.remove_reaction_part2)
             }
         }
-        is RecentActivity.ActivityType.CryptoFavourite -> {
-            if(activityType.isAdding) {
-                if(isPart1) context.getString(R.string.adding_ticker_part1) else context.getString(R.string.adding_cripto_part2)
-            }
-            else {
-                if(isPart1) context.getString(R.string.remove_ticker_part1) else context.getString(R.string.remove_cripto_part2)
-            }
-        }
-        is RecentActivity.ActivityType.StockFavourite -> {
-            if(activityType.isAdding) {
-                if(isPart1) context.getString(R.string.adding_ticker_part1) else context.getString(R.string.adding_asset_part2)
-            }
-            else {
-                if(isPart1) context.getString(R.string.remove_ticker_part1) else context.getString(R.string.remove_asset_part2)
-            }
-        }
-        is RecentActivity.ActivityType.TeamFavourite -> {
-            if(activityType.isAdding) {
-                if(isPart1) context.getString(R.string.adding_ticker_part1) else context.getString(R.string.adding_team_part2)
-            }
-            else {
-                if(isPart1) context.getString(R.string.remove_ticker_part1) else context.getString(R.string.remove_team_part2)
-            }
-        }
     }
 }
 

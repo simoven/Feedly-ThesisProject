@@ -1,6 +1,7 @@
 package com.simoneventrici.feedly.presentation.authentication
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -8,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,6 +27,9 @@ import com.simoneventrici.feedly.presentation.authentication.components.AuthButt
 import com.simoneventrici.feedly.presentation.authentication.components.GoogleButton
 import com.simoneventrici.feedly.presentation.navigation.Screen
 import com.simoneventrici.feedly.ui.theme.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @Composable
 fun WelcomeScreen(
@@ -32,13 +37,21 @@ fun WelcomeScreen(
     googleClient: GoogleSignInClient,
     authViewModel: AuthViewModel
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val text = LocalContext.current.getString(R.string.email_already_exists)
+    val context = LocalContext.current
+
     val startForResult = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val intent = result.data
                 if (result.data != null) {
                     val task: Task<GoogleSignInAccount> =
                         GoogleSignIn.getSignedInAccountFromIntent(intent)
-                    authViewModel.handleGoogleLogin(task.result.idToken ?: "")
+                        authViewModel.handleGoogleLogin(task.result.idToken ?: "").onEach {
+                            if(it == 409) {
+                                Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+                            }
+                        }.launchIn(coroutineScope)
                 }
             }
         }
@@ -99,7 +112,10 @@ fun WelcomeScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(
-                modifier = Modifier.weight(1f).height(1.dp).background(LighterGray)
+                modifier = Modifier
+                    .weight(1f)
+                    .height(1.dp)
+                    .background(LighterGray)
             )
             Text(
                 text = LocalContext.current.getString(R.string.or),
@@ -108,7 +124,10 @@ fun WelcomeScreen(
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
             Spacer(
-                modifier = Modifier.weight(1f).height(1.dp).background(LighterGray)
+                modifier = Modifier
+                    .weight(1f)
+                    .height(1.dp)
+                    .background(LighterGray)
             )
         }
         Spacer(modifier = Modifier.height(20.dp))

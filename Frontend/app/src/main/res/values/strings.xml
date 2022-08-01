@@ -14,14 +14,6 @@
     <string name="remove_reaction_part1">Removed reaction</string>
     <string name="adding_reaction_part2">to the news</string>
     <string name="remove_reaction_part2">to the news</string>
-    <string name="adding_ticker_part1">Added</string>
-    <string name="remove_ticker_part1">Removed</string>
-    <string name="adding_cripto_part2">to favourites cryptos</string>
-    <string name="remove_cripto_part2">from favourites cryptos</string>
-    <string name="adding_asset_part2">to favourites cryptos</string>
-    <string name="remove_asset_part2">from favourites cryptos</string>
-    <string name="adding_team_part2">to favourites teams</string>
-    <string name="remove_team_part2">from favourites teams</string>
     <string name="global_stats">Global Stats</string>
     <string name="n_coins">N° of coins</string>
     <string name="total_volume_24h">Total volume 24h</string>
@@ -91,10 +83,21 @@
     <string name="new_confirm_password_dont_match">The new and confirm password doesn\'t match</string>
     <string name="old_password_dont_match">The old password doesn\'t match</string>
     <string name="error_password_change">Error, please retry</string>
-    <string name="password_change_successful">Password changed successful</string>
+    <string name="password_change_successful">Password changed successfully</string>
     <string name="choose_language">Choose language</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="forgot_password">Forgot your password ?</string>
+    <string name="reset_password">Reset password</string>
+    <string name="email_sent">Email sent!</string>
+    <string name="email_already_exists">This email is already registered</string>
+    <string name="technology">Technology</string>
+    <string name="business">Business</string>
+    <string name="general">General</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="health">Health</string>
+    <string name="science">Science</string>
+    <string name="sport">Sport</string>
 
     <string name="gcp_id">600389690177-n462hj09iikdm7qbcnbrq4ohb292htr3.apps.googleusercontent.com</string>
 </resources>

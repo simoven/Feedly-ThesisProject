@@ -22,10 +22,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.sebaslogen.resaca.hilt.hiltViewModelScoped
 import com.simoneventrici.feedly.R
-import com.simoneventrici.feedly.presentation.authentication.AuthViewModel
-import com.simoneventrici.feedly.presentation.authentication.LoginScreen
-import com.simoneventrici.feedly.presentation.authentication.SignupScreen
-import com.simoneventrici.feedly.presentation.authentication.WelcomeScreen
+import com.simoneventrici.feedly.presentation.authentication.*
 import com.simoneventrici.feedly.presentation.crypto.CryptoScreen
 import com.simoneventrici.feedly.presentation.crypto.CryptoViewModel
 import com.simoneventrici.feedly.presentation.crypto.components.FavouriteCryptoChooser
@@ -207,6 +204,13 @@ fun AuthenticationNavigator(
             popExitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = animationSpec) }
         ) {
             SignupScreen(navController = navController, authViewModel = authViewModel)
+        }
+        composable(
+            route = Screen.PasswordResetScreen.route,
+            enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = animationSpec) },
+            popExitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = animationSpec) }
+        ) {
+            PasswordResetScreen(navController = navController, authViewModel = authViewModel)
         }
     }
 }

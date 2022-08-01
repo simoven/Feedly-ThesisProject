@@ -4,6 +4,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.simoneventrici.feedlyBackend.controller.dto.CredentialsDto
+import com.simoneventrici.feedlyBackend.model.primitives.Email
 import com.simoneventrici.feedlyBackend.model.primitives.Password
 import com.simoneventrici.feedlyBackend.service.UserService
 import com.simoneventrici.feedlyBackend.util.Properties
@@ -19,7 +20,7 @@ import java.util.*
 @RequestMapping("/auth")
 class AuthController(
     val userService: UserService,
-    val properties: Properties
+    val properties: Properties,
 ) {
 
     @ExceptionHandler(IllegalStateException::class)
@@ -28,7 +29,10 @@ class AuthController(
     }
 
     @ExceptionHandler(PSQLException::class)
-    fun handlePsqlException(): ResponseEntity<JSONObject> {
+    fun handlePsqlException(e: PSQLException): ResponseEntity<JSONObject> {
+        if(e.toString().contains("e-mail", ignoreCase = true) && e.toString().contains("already exists"))
+            return ResponseEntity(JSONObject().apply { put("msg", "The e-mail provided already exists") }, HttpStatus.CONFLICT)
+
         return ResponseEntity(JSONObject().apply { put("msg", "Internal server error") }, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
@@ -115,5 +119,13 @@ class AuthController(
         } else {
             ResponseEntity(JSONObject().apply { put("msg", "Inavlid token id") }, HttpStatus.BAD_REQUEST)
         }
+    }
+
+    @PostMapping("forgotPassword")
+    fun handleForgotPassword(@RequestBody obj: JSONObject): ResponseEntity<JSONObject> {
+        val email = obj["email"] as String? ?: throw IllegalStateException("no email provided")
+        val mailObj = Email(email)
+        userService.resetAndChangePassword(mailObj)
+        return ResponseEntity(HttpStatus.OK)
     }
 }

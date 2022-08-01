@@ -7,12 +7,14 @@ import com.simoneventrici.feedlyBackend.model.primitives.Password
 import com.simoneventrici.feedlyBackend.model.primitives.Username
 import com.simoneventrici.feedlyBackend.datasource.dao.UserDao
 import com.simoneventrici.feedlyBackend.security.Util
+import com.simoneventrici.feedlyBackend.util.EmailSender
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class UserService(
-    @Autowired val userDao: UserDao
+    @Autowired val userDao: UserDao,
+    val mailSender: EmailSender
 ) {
     fun checkUserCredentials(credentials: CredentialsDto): Boolean {
         Username(credentials.username)
@@ -60,5 +62,11 @@ class UserService(
 
     fun doLogout(user: User) {
         userDao.logoutUser(user)
+    }
+
+    fun resetAndChangePassword(email: Email) {
+        val newPassword = Util.generateNewPassword()
+        if(userDao.changeUserPasswordByEmail(email, Password(newPassword)))
+            mailSender.sendPasswordRecoveryEmail(email.value, newPassword)
     }
 }

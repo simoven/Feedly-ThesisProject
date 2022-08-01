@@ -14,6 +14,8 @@ import com.simoneventrici.feedly.persistence.DataStorePreferences
 import com.simoneventrici.feedly.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -177,15 +179,34 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun handleGoogleLogin(idToken: String) {
-        if(idToken.isBlank()) return
+    fun handleGoogleLogin(idToken: String): Flow<Int> = flow {
+        if(idToken.isNotBlank()) {
+            val response = authRepository.doGoogleLogin(idToken)
+            if (response.code == 200) {
+                preferences.saveToken(response.token ?: "")
 
-        viewModelScope.launch {
-            val token = authRepository.doGoogleLogin(idToken)
-            preferences.saveToken(token)
+                // se per qualche motivo il token è vuoto, significa che il login non è andato a buon fine
+                if (response.token?.isNotBlank() == true)
+                    isGoogleAccount.value = true
+            } else if (response.code == 409) { // conflitto di e-mail
+                emit(409)
+            }
+        }
+    }
 
-            if(token.isNotBlank())
-                isGoogleAccount.value = true
+    fun handlePasswordReset(email: String) {
+        clearErrorMessages()
+        val emailObj = validateEmail(email)
+
+        if(emailObj != null) {
+            viewModelScope.launch {
+                val resp = authRepository.doPasswordReset(emailObj)
+                if(resp) {
+                    showConfirmDialog.value = true
+                    delay(1500)
+                    showConfirmDialog.value = false
+                }
+            }
         }
     }
 

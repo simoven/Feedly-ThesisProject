@@ -26,8 +26,4 @@ class RecentActivityDao(
         }
         return list
     }
-
-    fun save(elem: RecentActivity) {
-        TODO("Not yet implemented")
-    }
 }

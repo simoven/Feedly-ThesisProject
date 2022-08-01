@@ -26,4 +26,7 @@ interface AuthAPI {
     @POST("googleLogin")
     suspend fun doGoogleLogin(@Body body: RequestBody): Response<ResponseBody>
 
+    @POST("forgotPassword")
+    suspend fun resetPassword(@Body body: RequestBody): Response<ResponseBody>
+
 }

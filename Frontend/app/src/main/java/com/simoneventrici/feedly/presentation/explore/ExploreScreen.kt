@@ -29,8 +29,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.simoneventrici.feedly.R
 import com.simoneventrici.feedly.commons.DataState
 import com.simoneventrici.feedly.commons.getSystemStatusbarHeightInDp
@@ -41,6 +39,7 @@ import com.simoneventrici.feedly.presentation.explore.components.NewsCard
 import com.simoneventrici.feedly.presentation.explore.components.NewsLoader
 import com.simoneventrici.feedly.presentation.explore.components.ScrollableTopBar
 import com.simoneventrici.feedly.presentation.navigation.PageSwiper
+import com.simoneventrici.feedly.presentation.navigation.TabHeader
 import com.simoneventrici.feedly.ui.theme.DarkGreen
 import com.simoneventrici.feedly.ui.theme.LighterBlack
 import com.simoneventrici.feedly.ui.theme.WhiteDark1
@@ -244,7 +243,7 @@ fun ExploreScreen(
         // passo tutte le pagine allo swiper, che le renderizzerà in base alla tab attiva
         PageSwiper(
             pagerState = pagerState,
-            tabList = allCategory.map { it.value.replaceFirstChar { ch -> ch.uppercase() } },
+            tabList = allCategory.map { TabHeader(content = it.value.replaceFirstChar { ch -> ch.uppercase() }, resId = it.getNameId()) },
             padding = PaddingValues(top = 52.dp),
             allPages = pagesMap,
             scrollUpState = scrollUpState,

@@ -5,28 +5,41 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.ScrollableTabRow
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRowDefaults
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.pager.*
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.simoneventrici.feedly.model.primitives.NewsCategory
 import com.simoneventrici.feedly.presentation.explore.PageState
-import com.simoneventrici.feedly.ui.theme.*
+import com.simoneventrici.feedly.ui.theme.MainGreen
+import com.simoneventrici.feedly.ui.theme.WhiteColor
+import com.simoneventrici.feedly.ui.theme.WhiteDark1
 import kotlinx.coroutines.launch
+
+data class TabHeader(
+    val content: String,
+    val resId: Int
+)
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun PageSwiper(
     pagerState: PagerState,
-    tabList: List<String>,
+    tabList: List<TabHeader>,
     padding: PaddingValues,
     allPages: Map<String, PageState>,
     scrollUpState: State<Boolean?>,
@@ -62,7 +75,7 @@ fun PageSwiper(
             },
             divider = {}
         ) {
-            tabList.forEachIndexed { index, title ->
+            tabList.forEachIndexed { index, header ->
                 val isCurrent = pagerState.currentPage == index
                 val color = remember {
                     Animatable(Color.Transparent)
@@ -75,7 +88,7 @@ fun PageSwiper(
                 Tab(
                     text = {
                         Text(
-                            text = title,
+                            text = LocalContext.current.getString(header.resId),
                             color = if (isCurrent) WhiteColor else WhiteDark1,
                             fontSize = if (isCurrent) 16.sp else 14.sp,
                             fontWeight = if (isCurrent) FontWeight.SemiBold else FontWeight.Medium
@@ -105,9 +118,9 @@ fun PageSwiper(
         ) {
             SwipeRefresh(
                 state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
-                onRefresh = { allPages[tabList[it].replaceFirstChar { ch -> ch.lowercase() }]?.onRefresh?.invoke() }
+                onRefresh = { allPages[tabList[it].content.replaceFirstChar { ch -> ch.lowercase() }]?.onRefresh?.invoke() }
             ) {
-                allPages[tabList[it].replaceFirstChar { ch -> ch.lowercase() }]?.content?.invoke()
+                allPages[tabList[it].content.replaceFirstChar { ch -> ch.lowercase() }]?.content?.invoke()
             }
         }
     }
