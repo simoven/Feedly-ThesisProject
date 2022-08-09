@@ -22,7 +22,7 @@ class StockService(
 
     // fetcho i dati 10 ticker alla volta, per via dei limiti dell'API
     fun fetchMarketData() {
-       /* var startIdx = 0
+        var startIdx = 0
         var endIdx = startIdx + 10
         while(endIdx <= allStocks.size) {
             val subList = allStocks.subList(startIdx, endIdx)
@@ -30,14 +30,7 @@ class StockService(
 
             startIdx += 10
             endIdx += 10
-        */
-            val subList = listOf(
-                Stock("aapl", "Apple"),
-                Stock("msft", "Microsot"),
-                Stock("goog", "Google"),
-                Stock("baba", "Alibaba")
-            )
-            val result = financeAPI.getMarketInfoByTicker(subList.map { it.ticker })
+
             // per ogni ticker fetchato, aggiungo i dati di mercato alla mappa
             result?.body?.let { resultMap ->
                 subList.forEach { stock ->
@@ -48,7 +41,7 @@ class StockService(
                         ?.let { stocksData -> stocksDataByTicker[stock.ticker] = stocksData }
                 }
             }
-        //}
+        }
     }
 
     fun isSupportedStock(ticker: Ticker): Boolean {

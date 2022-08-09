@@ -43,11 +43,10 @@ class SoccerService(
 
     fun fetchAllTeamMatches() {
         // per ogni team che gioca in serie A, fetcho la lista degli ultimi incontri e rimane salvata
-        val tempTeams = listOf(489, 505, 499)
-        /*allTeams.filter { it.playsInLeagueInYear[currentYear]?.leagueId == 135 }*/tempTeams.forEach { team ->
-            val result = footballAPI.getMatchesByTeamId(team, currentYear)
+        allTeams.filter { it.playsInLeagueInYear[currentYear]?.leagueId == 135 }.forEach { team ->
+            val result = footballAPI.getMatchesByTeamId(team.teamId, currentYear)
             result?.body?.let {
-                allMatchesByTeamId[team] = it.response.map { resp -> resp.toTeamMatch() }
+                allMatchesByTeamId[team.teamId] = it.response.map { resp -> resp.toTeamMatch() }
             }
         }
     }
@@ -64,7 +63,6 @@ class SoccerService(
     fun fetchAllLeaguesStandings() {
         // per ogni lega, fetcho la classifica attuale
         allLeagues.forEach { league ->
-        //listOf(SoccerLeague(135, "", "")).forEach { league ->
             val result = footballAPI.getStandingsByLeagueId(league.leagueId, currentYear)
             result?.body?.let {
                 allStandingsByLeagueId[league.leagueId] = it.response[0].league.standings[0].map { st -> st.toLeagueStanding() }

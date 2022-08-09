@@ -29,6 +29,9 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
+	implementation("com.google.api-client:google-api-client:1.32.1")
+	implementation("org.springframework.boot:spring-boot-starter-mail")
+
 }
 
 tasks.withType<KotlinCompile> {

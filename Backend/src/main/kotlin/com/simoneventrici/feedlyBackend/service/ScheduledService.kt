@@ -25,10 +25,10 @@ class ScheduledService(
     val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 
     init {
-        //GlobalScope.launch(Dispatchers.IO) { checkAndFetchNews() }
-        //GlobalScope.launch(Dispatchers.IO) { fetchSoccerData() }
-        //GlobalScope.launch(Dispatchers.Default) { removeOldNews() }
-        //GlobalScope.launch(Dispatchers.Default) { fetchFinanceData() }
+        GlobalScope.launch(Dispatchers.IO) { checkAndFetchNews() }
+        GlobalScope.launch(Dispatchers.IO) { fetchSoccerData() }
+        GlobalScope.launch(Dispatchers.Default) { removeOldNews() }
+        GlobalScope.launch(Dispatchers.Default) { fetchFinanceData() }
     }
 
     suspend fun checkAndFetchNews() {
@@ -70,7 +70,7 @@ class ScheduledService(
 
     suspend fun fetchFinanceData() {
         delay(2000)
-        //while(coroutineContext.isActive) {
+        while(coroutineContext.isActive) {
             kotlin.runCatching {
                 stockService.fetchMarketData()
                 println("${dateFormat.format(Date())} FETCHED Finance Data")
@@ -78,6 +78,6 @@ class ScheduledService(
                 println("${it::class} : ${it.message}")
             }
             delay(INTERVAL_FETCH_STOCKS)
-        //}
+        }
     }
 }
