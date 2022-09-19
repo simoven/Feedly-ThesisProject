@@ -15,7 +15,7 @@ import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
 
-class NewsRepository constructor(
+class NewsRepository constructor (
     private val newsAPI: NewsAPI,
     private val context: Context
 ) {

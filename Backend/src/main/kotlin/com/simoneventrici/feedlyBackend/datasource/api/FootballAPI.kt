@@ -29,7 +29,9 @@ class FootballAPI(
         var result: ResponseEntity<MatchFixturesDto?>? = null
         kotlin.runCatching {
             result = restTemplate.exchange<MatchFixturesDto?>(url, HttpMethod.GET, HttpEntity<String>(headers))
+            println(result)
         }.onFailure {
+            println("Failure on: $teamId -------------")
             println(SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(Date()) +  it.message)
         }
 

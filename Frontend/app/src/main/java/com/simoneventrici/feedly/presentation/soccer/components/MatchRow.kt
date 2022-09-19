@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.simoneventrici.feedly.model.TeamMatch
@@ -24,7 +25,10 @@ fun MatchRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // è la colonna contenente i loghi delle due squadre e il nome della lega dove hanno giocato
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.widthIn(0.dp, 100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Row() {
                 TeamLogoImage(imageUrl = match.getTeamLogoById(match.homeTeamId))
                 Spacer(modifier = Modifier.width(5.dp))
@@ -35,7 +39,9 @@ fun MatchRow(
                 text = match.leagueName,
                 color = WhiteDark2,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.W500
+                fontWeight = FontWeight.W500,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
 
@@ -46,7 +52,7 @@ fun MatchRow(
             Text(
                 text = "${match.homeTeamName} vs ${match.awayTeamName}",
                 color = WhiteColor,
-                fontSize = 18.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
             Text(

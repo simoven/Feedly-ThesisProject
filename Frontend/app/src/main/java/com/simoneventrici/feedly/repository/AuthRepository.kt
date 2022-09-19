@@ -1,7 +1,6 @@
 package com.simoneventrici.feedly.repository
 
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
+
 import com.simoneventrici.feedly.model.User
 import com.simoneventrici.feedly.model.primitives.Email
 import com.simoneventrici.feedly.model.primitives.Password

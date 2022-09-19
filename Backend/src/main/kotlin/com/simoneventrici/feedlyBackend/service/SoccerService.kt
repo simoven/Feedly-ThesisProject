@@ -17,7 +17,7 @@ class SoccerService(
 
     val allMatchesByTeamId: MutableMap<Int, List<TeamMatch>> = mutableMapOf()
     val allStandingsByLeagueId: MutableMap<Int, List<LeagueStandings>> = mutableMapOf()
-    val currentYear: Int = 2021
+    val currentYear: Int = 2022
 
     // 20 API Calls per le squadre
     // 5 API Calls per le classifiche

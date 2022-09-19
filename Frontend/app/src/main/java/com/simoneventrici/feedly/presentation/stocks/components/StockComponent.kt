@@ -33,18 +33,21 @@ fun StockComponent(
             Text(
                 text = stockData.name,
                 color = WhiteColor,
-                fontSize = 18.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.widthIn(0.dp, 100.dp)
             )
             Spacer(Modifier.width(10.dp))
 
             Text(
                 text = stockData.ticker.uppercase(),
                 color = WhiteDark2,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
 

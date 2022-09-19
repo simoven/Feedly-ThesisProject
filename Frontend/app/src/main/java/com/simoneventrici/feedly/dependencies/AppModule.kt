@@ -50,6 +50,12 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun providesNewsRepository(newsAPI: NewsAPI, @ApplicationContext context: Context): NewsRepository {
+        return NewsRepository(newsAPI, context)
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthAPI(): AuthAPI {
         return Retrofit.Builder()
             .baseUrl("${Constants.FEEDLY_BACKEND_URL}/auth/")
@@ -81,12 +87,6 @@ class AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(CryptoAPI::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun providesNewsRepository(newsAPI: NewsAPI, @ApplicationContext context: Context): NewsRepository {
-        return NewsRepository(newsAPI, context)
     }
 
     @Provides
