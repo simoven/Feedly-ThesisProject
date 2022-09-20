@@ -20,15 +20,15 @@ The home section is the entry point for the user personal feed. He can find its 
 # Weather
 Weather forecast of the day, in addiction to an overview of the following days' weather
 
-<img src="https://user-images.githubusercontent.com/61116733/175320993-33ca8b14-bac4-4bdc-b0bf-9a321d9899f3.png" alt="explore screen" width="200"/>
+<img src="https://user-images.githubusercontent.com/61116733/175320993-33ca8b14-bac4-4bdc-b0bf-9a321d9899f3.png" alt="weather screen" width="200"/>
 
 
 # Crypto
 A general overview of the market, along with a summary of the user's favourites cryptos, take place in the crypto section
 
 <div style="position: inline;">
-<img src="https://user-images.githubusercontent.com/61116733/175321339-1a1dae25-ad54-49b4-9173-dce13d76df1e.png" alt="explore screen" width="200"/>
-<img src="https://user-images.githubusercontent.com/61116733/175321352-055ca18c-6a8a-4b43-801c-0ced8415967d.png" alt="explore screen" width="200"/>
+<img src="https://user-images.githubusercontent.com/61116733/175321339-1a1dae25-ad54-49b4-9173-dce13d76df1e.png" alt="crypto screen" width="200"/>
+<img src="https://user-images.githubusercontent.com/61116733/175321352-055ca18c-6a8a-4b43-801c-0ced8415967d.png" alt="crypto screen" width="200"/>
 </div>
 
 
@@ -36,11 +36,14 @@ A general overview of the market, along with a summary of the user's favourites 
 Useful for every soccer enthusiast, the soccer section contains a list of the user's favourites teams' latest matches, together with the standings of his favourite league
 
 <div style="position: inline;">
-<img src="https://user-images.githubusercontent.com/61116733/175321900-79505c6c-aedf-4dee-ad1f-87b54eb79f8d.png" alt="explore screen" width="200"/>
-<img src="https://user-images.githubusercontent.com/61116733/175321904-a5f87ede-4895-463a-8d4d-819b1f81439e.png" alt="explore screen" width="200"/>
+<img src="https://user-images.githubusercontent.com/61116733/175321900-79505c6c-aedf-4dee-ad1f-87b54eb79f8d.png" alt="soccer screen" width="200"/>
+<img src="https://user-images.githubusercontent.com/61116733/175321904-a5f87ede-4895-463a-8d4d-819b1f81439e.png" alt="soccer screen" width="200"/>
 </div>
 
 
-The project is still in development and more will come
+# Finance
+Summary of the user's favourite stock indexes, along with the 5 day chart and price change percentage
 
-
+<div style="position: inline;">
+<img src="https://user-images.githubusercontent.com/61116733/191201786-9b0d5300-cfbe-4ef9-9fb9-923ec49c1149.png" alt="finance screen" width="200"/>
+</div>
